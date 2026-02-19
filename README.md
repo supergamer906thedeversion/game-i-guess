@@ -1,6 +1,6 @@
 # game-i-guess
 
-A simple HTML5 desktop simulator demo.
+A Windows 95-inspired HTML5 desktop simulator demo.
 
 ## Run locally
 

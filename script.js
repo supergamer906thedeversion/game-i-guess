@@ -6,28 +6,40 @@ const taskbarApps = document.getElementById("taskbar-apps");
 const clock = document.getElementById("clock");
 
 const appDefs = {
-  notes: {
-    title: "Notes",
+  computer: {
+    title: "My Computer",
     render: () => {
       const wrapper = document.createElement("div");
       wrapper.innerHTML = `
-        <p>Quick note pad for your simulated desktop:</p>
-        <textarea placeholder="Type something..."></textarea>
+        <p><strong>System Properties</strong></p>
+        <p>Operating System: Windows 95 (simulated)</p>
+        <p>Processor: Pentium vibes ✨</p>
+        <p>Memory: Enough for Minesweeper and Solitaire.</p>
+      `;
+      return wrapper;
+    }
+  },
+  notepad: {
+    title: "Notepad",
+    render: () => {
+      const wrapper = document.createElement("div");
+      wrapper.innerHTML = `
+        <p>Untitled - Notepad</p>
+        <textarea placeholder="Type your retro masterpiece..."></textarea>
       `;
       return wrapper;
     }
   },
   browser: {
-    title: "Browser",
+    title: "Internet Explorer",
     render: () => {
       const wrapper = document.createElement("div");
       wrapper.innerHTML = `
-        <p><strong>Welcome to the tiny web!</strong></p>
-        <p>This demo browser is just a static panel in this simulator.</p>
+        <p><strong>Welcome to the Information Superhighway!</strong></p>
         <ul>
-          <li>Open apps from icons or Start menu</li>
-          <li>Drag windows by title bar</li>
-          <li>Minimize and restore from taskbar</li>
+          <li>Dial-up tone not included</li>
+          <li>Open apps from desktop or Start menu</li>
+          <li>Drag windows and minimize to taskbar</li>
         </ul>
       `;
       return wrapper;
@@ -38,8 +50,8 @@ const appDefs = {
     render: () => {
       const wrapper = document.createElement("div");
       wrapper.innerHTML = `
-        <h3 style="margin-top:0">HTML5 Desktop Simulator</h3>
-        <p>A lightweight fake desktop environment made with HTML, CSS and JavaScript.</p>
+        <p><strong>Windows 95 Inspired Desktop</strong></p>
+        <p>Made with plain HTML, CSS, and JavaScript.</p>
       `;
       return wrapper;
     }
@@ -47,7 +59,7 @@ const appDefs = {
 };
 
 const openWindows = new Map();
-let z = 20;
+let z = 100;
 
 function updateClock() {
   clock.textContent = new Date().toLocaleTimeString([], {
@@ -56,14 +68,21 @@ function updateClock() {
   });
 }
 
+function refreshTaskbarState() {
+  openWindows.forEach(({ window, taskButton }) => {
+    taskButton.classList.toggle("active", window.classList.contains("active") && !window.classList.contains("hidden"));
+  });
+}
+
 function focusWindow(win) {
   document.querySelectorAll(".window").forEach((w) => w.classList.remove("active"));
   win.classList.add("active");
   z += 1;
   win.style.zIndex = String(z);
+  refreshTaskbarState();
 }
 
-function createTaskbarButton(appId, title, windowEl) {
+function createTaskbarButton(title, windowEl) {
   const button = document.createElement("button");
   button.className = "taskbar-app";
   button.textContent = title;
@@ -71,6 +90,9 @@ function createTaskbarButton(appId, title, windowEl) {
     const hidden = windowEl.classList.toggle("hidden");
     if (!hidden) {
       focusWindow(windowEl);
+    } else {
+      windowEl.classList.remove("active");
+      refreshTaskbarState();
     }
   });
   taskbarApps.append(button);
@@ -124,28 +146,30 @@ function openApp(appId) {
   titleEl.textContent = definition.title;
   contentEl.append(definition.render());
 
-  windowEl.style.left = `${120 + openWindows.size * 36}px`;
-  windowEl.style.top = `${70 + openWindows.size * 28}px`;
+  windowEl.style.left = `${95 + openWindows.size * 28}px`;
+  windowEl.style.top = `${45 + openWindows.size * 24}px`;
 
   makeDraggable(windowEl, headerEl);
-
   windowEl.addEventListener("pointerdown", () => focusWindow(windowEl));
 
-  const taskButton = createTaskbarButton(appId, definition.title, windowEl);
+  const taskButton = createTaskbarButton(definition.title, windowEl);
 
   closeButton.addEventListener("click", () => {
     taskButton.remove();
     windowEl.remove();
     openWindows.delete(appId);
+    refreshTaskbarState();
   });
 
   minimizeButton.addEventListener("click", () => {
     windowEl.classList.add("hidden");
+    windowEl.classList.remove("active");
+    refreshTaskbarState();
   });
 
   desktop.append(windowEl);
-  focusWindow(windowEl);
   openWindows.set(appId, { window: windowEl, taskButton });
+  focusWindow(windowEl);
 }
 
 function toggleStartMenu(force) {
@@ -164,9 +188,7 @@ document.querySelectorAll("[data-app]").forEach((button) => {
   });
 });
 
-startButton.addEventListener("click", () => {
-  toggleStartMenu();
-});
+startButton.addEventListener("click", () => toggleStartMenu());
 
 document.addEventListener("pointerdown", (event) => {
   if (!startMenu.contains(event.target) && event.target !== startButton) {
