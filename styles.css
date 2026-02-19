@@ -1,0 +1,172 @@
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: linear-gradient(145deg, #1a2f8e, #0f84c9 50%, #29b47f);
+  overflow: hidden;
+}
+
+.desktop {
+  position: fixed;
+  inset: 0 0 48px;
+  padding: 1rem;
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+  width: min-content;
+}
+
+.desktop-icon {
+  border: 0;
+  background: transparent;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  width: 82px;
+  padding: 0.35rem;
+  border-radius: 8px;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 50%);
+  cursor: pointer;
+}
+
+.desktop-icon:hover,
+.desktop-icon:focus-visible {
+  background: rgb(255 255 255 / 18%);
+}
+
+.icon-emoji {
+  font-size: 2rem;
+}
+
+.window {
+  position: absolute;
+  width: min(380px, 92vw);
+  min-height: 220px;
+  background: #f4f4f4;
+  border: 1px solid #b8b8b8;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 18px 34px rgb(0 0 0 / 35%);
+}
+
+.window.active {
+  border-color: #3f8cff;
+}
+
+.window-header {
+  background: linear-gradient(#fefefe, #d8e4f8);
+  border-bottom: 1px solid #b8b8b8;
+  padding: 0.4rem 0.55rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+  user-select: none;
+}
+
+.window-controls button {
+  border: 1px solid #c2c2c2;
+  background: #fff;
+  border-radius: 4px;
+  width: 28px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.window-controls button:hover {
+  background: #efefef;
+}
+
+.window-content {
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  color: #1b1b1b;
+}
+
+.window-content textarea {
+  width: 100%;
+  min-height: 125px;
+  resize: vertical;
+}
+
+.taskbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 48px;
+  background: rgb(20 23 32 / 78%);
+  backdrop-filter: blur(12px);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding-inline: 0.5rem;
+  color: white;
+}
+
+.taskbar-button,
+.start-menu button,
+.taskbar-app {
+  border: 1px solid rgb(255 255 255 / 28%);
+  color: white;
+  background: rgb(255 255 255 / 12%);
+  border-radius: 8px;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+}
+
+.taskbar-apps {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.taskbar-app {
+  white-space: nowrap;
+}
+
+.clock {
+  min-width: 68px;
+  text-align: right;
+}
+
+.start-menu {
+  position: fixed;
+  left: 0.5rem;
+  bottom: 54px;
+  width: 210px;
+  border-radius: 12px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  padding: 0.8rem;
+  background: rgb(26 28 35 / 86%);
+  color: #f8f8f8;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.start-menu h2 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.start-menu button {
+  text-align: left;
+}
+
+.hidden {
+  display: none;
+}
