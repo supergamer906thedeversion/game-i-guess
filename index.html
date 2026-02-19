@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTML5 Desktop Simulator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="desktop" id="desktop">
+    <button class="desktop-icon" data-app="notes" aria-label="Open Notes">
+      <span class="icon-emoji" aria-hidden="true">📝</span>
+      <span>Notes</span>
+    </button>
+    <button class="desktop-icon" data-app="browser" aria-label="Open Browser">
+      <span class="icon-emoji" aria-hidden="true">🌐</span>
+      <span>Browser</span>
+    </button>
+    <button class="desktop-icon" data-app="about" aria-label="Open About">
+      <span class="icon-emoji" aria-hidden="true">💻</span>
+      <span>About</span>
+    </button>
+  </main>
+
+  <section class="taskbar" aria-label="Taskbar">
+    <button id="start-button" class="taskbar-button" aria-expanded="false">Start</button>
+    <div class="taskbar-apps" id="taskbar-apps" aria-label="Open apps"></div>
+    <time id="clock" class="clock" aria-label="Current time"></time>
+  </section>
+
+  <aside class="start-menu hidden" id="start-menu" aria-label="Start menu">
+    <h2>Quick Launch</h2>
+    <button data-app="notes">📝 Notes</button>
+    <button data-app="browser">🌐 Browser</button>
+    <button data-app="about">💻 About</button>
+  </aside>
+
+  <template id="window-template">
+    <article class="window" role="dialog" aria-modal="false">
+      <header class="window-header">
+        <strong class="window-title"></strong>
+        <div class="window-controls">
+          <button class="minimize" aria-label="Minimize">—</button>
+          <button class="close" aria-label="Close">✕</button>
+        </div>
+      </header>
+      <div class="window-content"></div>
+    </article>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
