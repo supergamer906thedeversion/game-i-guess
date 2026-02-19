@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Windows 95 Inspired Desktop</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="desktop" id="desktop" aria-label="Desktop">
+    <button class="desktop-icon" data-app="computer" aria-label="Open My Computer">
+      <span class="icon-emoji" aria-hidden="true">🖥️</span>
+      <span>My Computer</span>
+    </button>
+    <button class="desktop-icon" data-app="notepad" aria-label="Open Notepad">
+      <span class="icon-emoji" aria-hidden="true">📄</span>
+      <span>Notepad</span>
+    </button>
+    <button class="desktop-icon" data-app="browser" aria-label="Open Internet Explorer">
+      <span class="icon-emoji" aria-hidden="true">🌐</span>
+      <span>Internet</span>
+    </button>
+  </main>
+
+  <section class="taskbar" aria-label="Taskbar">
+    <button id="start-button" class="start-button" aria-expanded="false">🟩 Start</button>
+    <div class="taskbar-apps" id="taskbar-apps" aria-label="Open applications"></div>
+    <time id="clock" class="clock" aria-label="Current time"></time>
+  </section>
+
+  <aside class="start-menu hidden" id="start-menu" aria-label="Start menu">
+    <div class="start-menu-banner">Windows 95</div>
+    <div class="start-menu-items">
+      <button data-app="computer">🖥️ My Computer</button>
+      <button data-app="notepad">📄 Notepad</button>
+      <button data-app="browser">🌐 Internet Explorer</button>
+      <hr />
+      <button data-app="about">ℹ️ About This Desktop</button>
+    </div>
+  </aside>
+
+  <template id="window-template">
+    <article class="window" role="dialog" aria-modal="false">
+      <header class="window-header">
+        <strong class="window-title"></strong>
+        <div class="window-controls">
+          <button class="minimize" aria-label="Minimize">_</button>
+          <button class="close" aria-label="Close">✕</button>
+        </div>
+      </header>
+      <div class="window-content"></div>
+    </article>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
