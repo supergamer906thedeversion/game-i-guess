@@ -31,3 +31,10 @@ All MP3 files for the project are stored in this folder:
 - romeo-and-juliet-op-64-no-13-dance-of-the-knights-sergei-prokofiev.mp3
 - turkymarch.mp3
 - waltz-in-a-minor-opus-34-no-2.mp3
+
+## Clarifications
+
+- `turkymarch.mp3`: simplified version of Beethoven's Turkish March.
+- `Heartaches (as played by The Caretaker in Everywhere at the End of Time Stage One) (1).mp3`: piano version.
+- `Heartaches (as played by The Caretaker in Everywhere at the End of Time Stage One) (2).mp3`: brass arrangement.
+- `Heartaches (as played by The Caretaker in Everywhere at the End of Time Stage One).mp3`: saw synth version.
