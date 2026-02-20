@@ -5,10 +5,42 @@ const startMenu = document.getElementById("start-menu");
 const taskbarApps = document.getElementById("taskbar-apps");
 const clock = document.getElementById("clock");
 
-const musicTrack = {
-  title: "Clair de Lune",
-  src: "Music/Clair%20de%20Lune.mp3"
-};
+const musicTracks = [
+  { title: "1812 Overture - Tchaikovsky", src: "Music/1812%20Overture%20-%20Tchaikovsky.mp3" },
+  { title: "Can Can", src: "Music/Can%20Can.mp3" },
+  { title: "Cello Suite No. 1", src: "Music/Cello%20Suite%20No.%201.mp3" },
+  { title: "Clair de Lune", src: "Music/Clair%20de%20Lune.mp3" },
+  { title: "Eine Kleine Nachtmusik Movement 1", src: "Music/Eine%20Kleine%20Nachtmusik%20Movement%201.mp3" },
+  { title: "Fur Elise", src: "Music/Fur%20Elise.mp3" },
+  { title: "Heartaches (as played by The Caretaker in Everywhere at the End of Time Stage One) (1)", src: "Music/Heartaches%20%28as%20played%20by%20The%20Caretaker%20in%20Everywhere%20at%20the%20End%20of%20Time%20Stage%20One%29%20%281%29.mp3" },
+  { title: "Heartaches (as played by The Caretaker in Everywhere at the End of Time Stage One) (2)", src: "Music/Heartaches%20%28as%20played%20by%20The%20Caretaker%20in%20Everywhere%20at%20the%20End%20of%20Time%20Stage%20One%29%20%282%29.mp3" },
+  { title: "Heartaches (as played by The Caretaker in Everywhere at the End of Time Stage One)", src: "Music/Heartaches%20%28as%20played%20by%20The%20Caretaker%20in%20Everywhere%20at%20the%20End%20of%20Time%20Stage%20One%29.mp3" },
+  { title: "Hungarian-Rhapsody-Nr-2", src: "Music/Hungarian-Rhapsody-Nr-2.mp3" },
+  { title: "Lacrimosa", src: "Music/Lacrimosa.mp3" },
+  { title: "Marche Funebre", src: "Music/Marche%20Funebre.mp3" },
+  { title: "Moonlight Sonata Mvmt. 3", src: "Music/Moonlight%20Sonata%20Mvmt.%203.mp3" },
+  { title: "New World Symphony Mvmt. 4", src: "Music/New%20World%20Symphony%20Mvmt.%204.mp3" },
+  { title: "Nocturne Op. 9 No.2", src: "Music/Nocturne%20Op.%209%20No.2.mp3" },
+  { title: "Swan Lake Act 2", src: "Music/Swan%20Lake%20Act%202.mp3" },
+  { title: "Turkish March (Mozart Version)", src: "Music/Turkish%20March%20%28Mozart%20Version%29.mp3" },
+  { title: "arabesque-l-66-no-1-in-e-major", src: "Music/arabesque-l-66-no-1-in-e-major.mp3" },
+  { title: "gnossienne-no-1", src: "Music/gnossienne-no-1.mp3" },
+  { title: "gymnopedie-no-1-satie", src: "Music/gymnopedie-no-1-satie.mp3" },
+  { title: "isle-of-the-dead", src: "Music/isle-of-the-dead.mp3" },
+  { title: "iv-finale-symphony-no6-pathetique-pyotr-ilyich-tchaikovsky", src: "Music/iv-finale-symphony-no6-pathetique-pyotr-ilyich-tchaikovsky.mp3" },
+  { title: "night-on-bald-mountain-noc-na-lysoj-gore", src: "Music/night-on-bald-mountain-noc-na-lysoj-gore.mp3" },
+  { title: "peer-gynt-suite-no-1-morning-mood", src: "Music/peer-gynt-suite-no-1-morning-mood.mp3" },
+  { title: "prelude-opus-28-no-4-in-e-minor-chopin", src: "Music/prelude-opus-28-no-4-in-e-minor-chopin.mp3" },
+  { title: "ravel-pavane-pour-une-infante-defunte", src: "Music/ravel-pavane-pour-une-infante-defunte.mp3" },
+  { title: "romeo-and-juliet-op-64-no-13-dance-of-the-knights-sergei-prokofiev", src: "Music/romeo-and-juliet-op-64-no-13-dance-of-the-knights-sergei-prokofiev.mp3" },
+  { title: "turkymarch", src: "Music/turkymarch.mp3" },
+  { title: "waltz-in-a-minor-opus-34-no-2", src: "Music/waltz-in-a-minor-opus-34-no-2.mp3" }
+];
+
+function pickRandomTrack() {
+  const randomIndex = Math.floor(Math.random() * musicTracks.length);
+  return musicTracks[randomIndex];
+}
 
 function formatTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) {
@@ -22,12 +54,13 @@ function formatTime(seconds) {
 }
 
 function createMusicPlayer() {
+  const track = pickRandomTrack();
   const wrapper = document.createElement("section");
   wrapper.className = "winamp-player";
 
   wrapper.innerHTML = `
     <div class="winamp-display" aria-live="polite">
-      <p class="winamp-track">${musicTrack.title}</p>
+      <p class="winamp-track">${track.title}</p>
       <p class="winamp-time">0:00 / 0:00</p>
     </div>
     <div class="winamp-progress-wrap">
@@ -38,11 +71,11 @@ function createMusicPlayer() {
       <button type="button" data-action="pause">⏸ Pause</button>
       <button type="button" data-action="stop">⏹ Stop</button>
     </div>
-    <p class="winamp-hint">Now playing from /Music: ${musicTrack.title}</p>
+    <p class="winamp-hint">Now playing from /Music: ${track.title}</p>
   `;
 
   const audio = document.createElement("audio");
-  audio.src = musicTrack.src;
+  audio.src = track.src;
   audio.preload = "metadata";
 
   const timeEl = wrapper.querySelector(".winamp-time");
