@@ -84,8 +84,8 @@ function playStartupChime() {
   setTimeout(() => beep({ frequency: 520, duration: 0.08, volume: 0.025 }), 180);
 }
 
-function pickRandomTrack() {
-  return musicTracks[Math.floor(Math.random() * musicTracks.length)];
+function pickRandomTrackIndex() {
+  return Math.floor(Math.random() * musicTracks.length);
 }
 
 function formatTime(seconds) {
@@ -98,38 +98,92 @@ function formatTime(seconds) {
 }
 
 function createMusicPlayer() {
-  const track = pickRandomTrack();
   const wrapper = document.createElement("section");
   wrapper.className = "winamp-player";
 
+  let currentTrackIndex = pickRandomTrackIndex();
+  let shuffleMode = false;
+  let loopMode = false;
+
   wrapper.innerHTML = `
     <div class="winamp-display" aria-live="polite">
-      <p class="winamp-track">TRACK: ${track.title}</p>
+      <p class="winamp-track">TRACK: --</p>
       <p class="winamp-time">0:00 / 0:00</p>
     </div>
     <div class="winamp-progress-wrap">
       <input class="winamp-progress" type="range" min="0" max="100" value="0" aria-label="Song progress" />
     </div>
     <div class="winamp-controls" role="group" aria-label="Player controls">
+      <button type="button" data-action="prev">PREV</button>
       <button type="button" data-action="play">PLAY</button>
       <button type="button" data-action="pause">PAUSE</button>
       <button type="button" data-action="stop">STOP</button>
+      <button type="button" data-action="next">NEXT</button>
     </div>
-    <p class="winamp-hint">MODULE: AUDIO UTILITY</p>
+    <div class="winamp-controls winamp-controls-secondary" role="group" aria-label="Extended controls">
+      <button type="button" data-action="rew">REW</button>
+      <button type="button" data-action="ff">FF</button>
+      <button type="button" data-action="shuffle">SHUF OFF</button>
+      <button type="button" data-action="loop">LOOP OFF</button>
+      <button type="button" data-action="mute">MUTE</button>
+    </div>
+    <div class="winamp-meta-grid">
+      <p class="winamp-stat">QUEUE: <span class="winamp-queue">1 / ${musicTracks.length}</span></p>
+      <p class="winamp-stat">MODE: <span class="winamp-mode">LINEAR</span></p>
+      <p class="winamp-stat">VOL: <span class="winamp-volume-readout">80%</span></p>
+      <label class="winamp-volume-wrap">LEVEL
+        <input class="winamp-volume" type="range" min="0" max="100" value="80" aria-label="Volume" />
+      </label>
+    </div>
+    <p class="winamp-hint">MODULE: AUDIO UTILITY / ARCHIVE CHANNEL</p>
   `;
 
   const audio = document.createElement("audio");
-  audio.src = track.src;
   audio.preload = "metadata";
+  audio.volume = 0.8;
 
+  const trackEl = wrapper.querySelector(".winamp-track");
   const timeEl = wrapper.querySelector(".winamp-time");
   const progressEl = wrapper.querySelector(".winamp-progress");
+  const queueEl = wrapper.querySelector(".winamp-queue");
+  const modeEl = wrapper.querySelector(".winamp-mode");
+  const volumeReadoutEl = wrapper.querySelector(".winamp-volume-readout");
+  const volumeEl = wrapper.querySelector(".winamp-volume");
+  const shuffleButton = wrapper.querySelector('[data-action="shuffle"]');
+  const loopButton = wrapper.querySelector('[data-action="loop"]');
+  const muteButton = wrapper.querySelector('[data-action="mute"]');
 
   const syncUI = () => {
     const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
     const current = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
     progressEl.value = String(duration > 0 ? (current / duration) * 100 : 0);
     timeEl.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+    queueEl.textContent = `${currentTrackIndex + 1} / ${musicTracks.length}`;
+    modeEl.textContent = shuffleMode ? "SHUFFLE" : loopMode ? "LOOP ONE" : "LINEAR";
+    volumeReadoutEl.textContent = `${Math.round(audio.volume * 100)}%${audio.muted ? " M" : ""}`;
+  };
+
+  const loadTrack = (index, autoplay = false) => {
+    const normalized = (index + musicTracks.length) % musicTracks.length;
+    currentTrackIndex = normalized;
+    const track = musicTracks[normalized];
+    trackEl.textContent = `TRACK: ${track.title}`;
+    audio.src = track.src;
+    audio.load();
+    syncUI();
+    if (autoplay) {
+      audio.play();
+    }
+  };
+
+  const nextTrack = (autoplay = true) => {
+    const index = shuffleMode ? pickRandomTrackIndex() : currentTrackIndex + 1;
+    loadTrack(index, autoplay);
+  };
+
+  const previousTrack = () => {
+    const index = shuffleMode ? pickRandomTrackIndex() : currentTrackIndex - 1;
+    loadTrack(index, true);
   };
 
   wrapper.querySelector('[data-action="play"]').addEventListener("click", () => {
@@ -147,13 +201,84 @@ function createMusicPlayer() {
     syncUI();
   });
 
+  wrapper.querySelector('[data-action="next"]').addEventListener("click", () => {
+    playClickSound();
+    nextTrack(true);
+  });
+
+  wrapper.querySelector('[data-action="prev"]').addEventListener("click", () => {
+    playClickSound();
+    previousTrack();
+  });
+
+  wrapper.querySelector('[data-action="rew"]').addEventListener("click", () => {
+    playClickSound();
+    audio.currentTime = Math.max(0, audio.currentTime - 10);
+    syncUI();
+  });
+
+  wrapper.querySelector('[data-action="ff"]').addEventListener("click", () => {
+    playClickSound();
+    const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
+    audio.currentTime = Math.min(duration, audio.currentTime + 10);
+    syncUI();
+  });
+
+  shuffleButton.addEventListener("click", () => {
+    playClickSound();
+    shuffleMode = !shuffleMode;
+    shuffleButton.textContent = shuffleMode ? "SHUF ON" : "SHUF OFF";
+    if (shuffleMode) {
+      loopMode = false;
+      loopButton.textContent = "LOOP OFF";
+    }
+    syncUI();
+  });
+
+  loopButton.addEventListener("click", () => {
+    playClickSound();
+    loopMode = !loopMode;
+    loopButton.textContent = loopMode ? "LOOP ON" : "LOOP OFF";
+    if (loopMode) {
+      shuffleMode = false;
+      shuffleButton.textContent = "SHUF OFF";
+    }
+    syncUI();
+  });
+
+  muteButton.addEventListener("click", () => {
+    playClickSound();
+    audio.muted = !audio.muted;
+    muteButton.textContent = audio.muted ? "UNMUTE" : "MUTE";
+    syncUI();
+  });
+
   progressEl.addEventListener("input", () => {
     if (!Number.isFinite(audio.duration) || audio.duration === 0) return;
     audio.currentTime = (Number(progressEl.value) / 100) * audio.duration;
   });
 
+  volumeEl.addEventListener("input", () => {
+    audio.volume = Number(volumeEl.value) / 100;
+    if (audio.volume > 0 && audio.muted) {
+      audio.muted = false;
+      muteButton.textContent = "MUTE";
+    }
+    syncUI();
+  });
+
   audio.addEventListener("timeupdate", syncUI);
   audio.addEventListener("loadedmetadata", syncUI);
+  audio.addEventListener("ended", () => {
+    if (loopMode) {
+      audio.currentTime = 0;
+      audio.play();
+      return;
+    }
+    nextTrack(true);
+  });
+
+  loadTrack(currentTrackIndex, false);
   wrapper.append(audio);
   return wrapper;
 }
