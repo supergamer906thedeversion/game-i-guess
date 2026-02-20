@@ -19,14 +19,7 @@ const musicTracks = [
   { title: "Clair de Lune", src: "Music/Clair%20de%20Lune.mp3" },
   { title: "Eine Kleine Nachtmusik Movement 1", src: "Music/Eine%20Kleine%20Nachtmusik%20Movement%201.mp3" },
   { title: "Fur Elise", src: "Music/Fur%20Elise.mp3" },
-  { title: "Heartaches (as played by The Caretaker in Everywhere at the End of Time Stage One) (1)", src: "Music/Heartaches%20%28as%20played%20by%20The%20Caretaker%20in%20Everywhere%20at%20the%20End%20of%20Time%20Stage%20One%29%20%281%29.mp3" },
-  { title: "Heartaches (as played by The Caretaker in Everywhere at the End of Time Stage One) (2)", src: "Music/Heartaches%20%28as%20played%20by%20The%20Caretaker%20in%20Everywhere%20at%20the%20End%20of%20Time%20Stage%20One%29%20%282%29.mp3" },
-  { title: "Heartaches (as played by The Caretaker in Everywhere at the End of Time Stage One)", src: "Music/Heartaches%20%28as%20played%20by%20The%20Caretaker%20in%20Everywhere%20at%20the%20End%20of%20Time%20Stage%20One%29.mp3" },
-  { title: "Hungarian-Rhapsody-Nr-2", src: "Music/Hungarian-Rhapsody-Nr-2.mp3" },
   { title: "Lacrimosa", src: "Music/Lacrimosa.mp3" },
-  { title: "Marche Funebre", src: "Music/Marche%20Funebre.mp3" },
-  { title: "Moonlight Sonata Mvmt. 3", src: "Music/Moonlight%20Sonata%20Mvmt.%203.mp3" },
-  { title: "New World Symphony Mvmt. 4", src: "Music/New%20World%20Symphony%20Mvmt.%204.mp3" },
   { title: "Nocturne Op. 9 No.2", src: "Music/Nocturne%20Op.%209%20No.2.mp3" },
   { title: "Swan Lake Act 2", src: "Music/Swan%20Lake%20Act%202.mp3" },
   { title: "Turkish March (Mozart Version)", src: "Music/Turkish%20March%20%28Mozart%20Version%29.mp3" },
@@ -210,12 +203,10 @@ function createMusicPlayer() {
     playClickSound();
     audio.play();
   });
-
   wrapper.querySelector('[data-action="pause"]').addEventListener("click", () => {
     playClickSound();
     audio.pause();
   });
-
   wrapper.querySelector('[data-action="stop"]').addEventListener("click", () => {
     playClickSound();
     audio.pause();
