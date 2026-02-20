@@ -3,46 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Windows 95 Inspired Desktop</title>
+  <title>AirportOS 1.0 - Terminal Suite '96</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="desktop" id="desktop" aria-label="Desktop">
-    <button class="desktop-icon" data-app="computer" aria-label="Open My Computer">
-      <span class="icon-emoji" aria-hidden="true">🖥️</span>
-      <span>My Computer</span>
+  <section class="boot-screen" id="boot-screen" aria-live="polite">
+    <pre class="bios-log" id="bios-log">AIRPORTOS BIOS v1.96
+CPU: TERMINAL CONTROL UNIT
+MEMORY TEST: 0000 KB</pre>
+    <div class="boot-progress" aria-label="Boot progress">
+      <div class="boot-progress-segments" id="boot-progress-segments"></div>
+    </div>
+    <p class="boot-hint">Initializing AirportOS...</p>
+  </section>
+
+  <main class="desktop hidden" id="desktop" aria-label="Airport desktop">
+    <button class="desktop-icon" data-app="systems" title="Monitors runway traffic." aria-label="Open Flight Systems">
+      <span class="icon-pixel" aria-hidden="true">▣</span>
+      <span>Flight Systems</span>
     </button>
-    <button class="desktop-icon" data-app="notepad" aria-label="Open Notepad">
-      <span class="icon-emoji" aria-hidden="true">📄</span>
-      <span>Notepad</span>
+    <button class="desktop-icon" data-app="hangar" title="Maintains gate assignment records." aria-label="Open Hangar">
+      <span class="icon-pixel" aria-hidden="true">▥</span>
+      <span>Hangar</span>
     </button>
-    <button class="desktop-icon" data-app="browser" aria-label="Open Internet Explorer">
-      <span class="icon-emoji" aria-hidden="true">🌐</span>
-      <span>Internet</span>
+    <button class="desktop-icon" data-app="radar" title="Tracks transponder IDs." aria-label="Open Radar Control">
+      <span class="icon-pixel" aria-hidden="true">▦</span>
+      <span>Radar Control</span>
     </button>
-    <button class="desktop-icon" data-app="winamp" aria-label="Open Winamp">
-      <span class="icon-emoji" aria-hidden="true">🎵</span>
-      <span>Winamp</span>
+    <button class="desktop-icon" data-app="runway" title="Queues runway module operations." aria-label="Open Runway Monitor">
+      <span class="icon-pixel" aria-hidden="true">▤</span>
+      <span>Runway Monitor</span>
+    </button>
+    <button class="desktop-icon" data-app="archive" title="Opens diagnostic records." aria-label="Open Archive Terminal">
+      <span class="icon-pixel" aria-hidden="true">▧</span>
+      <span>Archive Terminal</span>
     </button>
   </main>
 
-  <section class="taskbar" aria-label="Taskbar">
-    <button id="start-button" class="start-button" aria-expanded="false">🟩 Start</button>
-    <div class="taskbar-apps" id="taskbar-apps" aria-label="Open applications"></div>
-    <time id="clock" class="clock" aria-label="Current time"></time>
+  <section class="taskbar hidden" id="taskbar" aria-label="Taskbar">
+    <button id="start-button" class="start-button" aria-expanded="false">■ TOWER</button>
+    <div class="taskbar-apps" id="taskbar-apps" aria-label="Open modules"></div>
+    <div class="taskbar-right">
+      <span class="task-icon" title="Diagnostics Online">◫</span>
+      <time id="clock" class="clock" aria-label="Current time"></time>
+    </div>
   </section>
 
-  <aside class="start-menu hidden" id="start-menu" aria-label="Start menu">
-    <div class="start-menu-banner">Windows 95</div>
+  <aside class="start-menu hidden" id="start-menu" aria-label="Control menu">
+    <div class="start-menu-banner">AIRPORTOS 1.0</div>
     <div class="start-menu-items">
-      <button data-app="computer">🖥️ My Computer</button>
-      <button data-app="notepad">📄 Notepad</button>
-      <button data-app="browser">🌐 Internet Explorer</button>
-      <button data-app="winamp">🎵 Winamp</button>
+      <button data-app="systems">▣ FLIGHT SYSTEMS</button>
+      <button data-app="hangar">▥ HANGAR</button>
+      <button data-app="radar">▦ RADAR CONTROL</button>
+      <button data-app="runway">▤ RUNWAY MONITOR</button>
+      <button data-app="archive">▧ ARCHIVE TERMINAL</button>
       <hr />
-      <button data-app="about">ℹ️ About This Desktop</button>
+      <p class="menu-label">THEME MODULE</p>
+      <div class="theme-switcher" role="group" aria-label="Color theme options">
+        <button data-theme="gray">GREY</button>
+        <button data-theme="teal">TEAL</button>
+        <button data-theme="beige">BEIGE</button>
+      </div>
     </div>
   </aside>
+
+  <section class="system-message hidden" id="system-message" role="alertdialog" aria-live="assertive">
+    <header class="message-header">DIAGNOSTIC ALERT</header>
+    <p id="system-message-text"></p>
+    <button id="system-message-close">OK</button>
+  </section>
 
   <template id="window-template">
     <article class="window" role="dialog" aria-modal="false">
@@ -50,10 +79,12 @@
         <strong class="window-title"></strong>
         <div class="window-controls">
           <button class="minimize" aria-label="Minimize">_</button>
-          <button class="close" aria-label="Close">✕</button>
+          <button class="fullscreen" aria-label="Fullscreen">□</button>
+          <button class="close" aria-label="Close">■</button>
         </div>
       </header>
       <div class="window-content"></div>
+      <footer class="window-status"></footer>
     </article>
   </template>
 
