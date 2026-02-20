@@ -324,6 +324,46 @@ textarea {
   padding: 2px;
 }
 
+
+.window-content pre {
+  margin: 3px 0 0;
+  padding: 3px;
+  max-height: 185px;
+  overflow: auto;
+  border-top: 2px solid var(--frame-mid);
+  border-left: 2px solid var(--frame-mid);
+  border-right: 2px solid var(--frame-light);
+  border-bottom: 2px solid var(--frame-light);
+  background: #ddd6c0;
+  font-family: "Courier New", monospace;
+  font-size: 9px;
+  line-height: 1.2;
+}
+
+.window-content button {
+  background: var(--taskbar-bg);
+  border-top: 2px solid var(--frame-light);
+  border-left: 2px solid var(--frame-light);
+  border-right: 2px solid var(--frame-dark);
+  border-bottom: 2px solid var(--frame-dark);
+  padding: 1px 5px;
+  min-height: 18px;
+}
+
+.window-content button:active {
+  border-top-color: var(--frame-dark);
+  border-left-color: var(--frame-dark);
+  border-right-color: var(--frame-light);
+  border-bottom-color: var(--frame-light);
+}
+
+.systems-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 6px;
+  align-items: center;
+}
+
 .window-content input[type="checkbox"] {
   appearance: none;
   width: 11px;
