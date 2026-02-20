@@ -5,6 +5,85 @@ const startMenu = document.getElementById("start-menu");
 const taskbarApps = document.getElementById("taskbar-apps");
 const clock = document.getElementById("clock");
 
+const musicTrack = {
+  title: "Clair de Lune",
+  src: "Music/Clair%20de%20Lune.mp3"
+};
+
+function formatTime(seconds) {
+  if (!Number.isFinite(seconds) || seconds < 0) {
+    return "0:00";
+  }
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60)
+    .toString()
+    .padStart(2, "0");
+  return `${mins}:${secs}`;
+}
+
+function createMusicPlayer() {
+  const wrapper = document.createElement("section");
+  wrapper.className = "winamp-player";
+
+  wrapper.innerHTML = `
+    <div class="winamp-display" aria-live="polite">
+      <p class="winamp-track">${musicTrack.title}</p>
+      <p class="winamp-time">0:00 / 0:00</p>
+    </div>
+    <div class="winamp-progress-wrap">
+      <input class="winamp-progress" type="range" min="0" max="100" value="0" aria-label="Song progress" />
+    </div>
+    <div class="winamp-controls" role="group" aria-label="Player controls">
+      <button type="button" data-action="play">▶ Play</button>
+      <button type="button" data-action="pause">⏸ Pause</button>
+      <button type="button" data-action="stop">⏹ Stop</button>
+    </div>
+    <p class="winamp-hint">Now playing from /Music: ${musicTrack.title}</p>
+  `;
+
+  const audio = document.createElement("audio");
+  audio.src = musicTrack.src;
+  audio.preload = "metadata";
+
+  const timeEl = wrapper.querySelector(".winamp-time");
+  const progressEl = wrapper.querySelector(".winamp-progress");
+
+  const syncUI = () => {
+    const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
+    const current = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
+    const percent = duration > 0 ? (current / duration) * 100 : 0;
+    progressEl.value = String(percent);
+    timeEl.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+  };
+
+  wrapper.querySelector('[data-action="play"]').addEventListener("click", () => {
+    audio.play();
+  });
+
+  wrapper.querySelector('[data-action="pause"]').addEventListener("click", () => {
+    audio.pause();
+  });
+
+  wrapper.querySelector('[data-action="stop"]').addEventListener("click", () => {
+    audio.pause();
+    audio.currentTime = 0;
+    syncUI();
+  });
+
+  progressEl.addEventListener("input", () => {
+    if (!Number.isFinite(audio.duration) || audio.duration === 0) return;
+    const percent = Number(progressEl.value) / 100;
+    audio.currentTime = percent * audio.duration;
+  });
+
+  audio.addEventListener("timeupdate", syncUI);
+  audio.addEventListener("loadedmetadata", syncUI);
+  audio.addEventListener("ended", syncUI);
+
+  wrapper.append(audio);
+  return wrapper;
+}
+
 const appDefs = {
   computer: {
     title: "My Computer",
@@ -44,6 +123,10 @@ const appDefs = {
       `;
       return wrapper;
     }
+  },
+  winamp: {
+    title: "Winamp",
+    render: () => createMusicPlayer()
   },
   about: {
     title: "About",
@@ -155,6 +238,10 @@ function openApp(appId) {
   const taskButton = createTaskbarButton(definition.title, windowEl);
 
   closeButton.addEventListener("click", () => {
+    windowEl.querySelectorAll("audio").forEach((audioEl) => {
+      audioEl.pause();
+      audioEl.currentTime = 0;
+    });
     taskButton.remove();
     windowEl.remove();
     openWindows.delete(appId);
