@@ -190,12 +190,10 @@ function createMusicPlayer() {
     playClickSound();
     audio.play();
   });
-
   wrapper.querySelector('[data-action="pause"]').addEventListener("click", () => {
     playClickSound();
     audio.pause();
   });
-
   wrapper.querySelector('[data-action="stop"]').addEventListener("click", () => {
     playClickSound();
     audio.pause();
