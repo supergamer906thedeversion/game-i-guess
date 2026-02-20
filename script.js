@@ -21,7 +21,20 @@ const musicTracks = [
   { title: "Fur Elise", src: "Music/Fur%20Elise.mp3" },
   { title: "Lacrimosa", src: "Music/Lacrimosa.mp3" },
   { title: "Nocturne Op. 9 No.2", src: "Music/Nocturne%20Op.%209%20No.2.mp3" },
-  { title: "Swan Lake Act 2", src: "Music/Swan%20Lake%20Act%202.mp3" }
+  { title: "Swan Lake Act 2", src: "Music/Swan%20Lake%20Act%202.mp3" },
+  { title: "Turkish March (Mozart Version)", src: "Music/Turkish%20March%20%28Mozart%20Version%29.mp3" },
+  { title: "arabesque-l-66-no-1-in-e-major", src: "Music/arabesque-l-66-no-1-in-e-major.mp3" },
+  { title: "gnossienne-no-1", src: "Music/gnossienne-no-1.mp3" },
+  { title: "gymnopedie-no-1-satie", src: "Music/gymnopedie-no-1-satie.mp3" },
+  { title: "isle-of-the-dead", src: "Music/isle-of-the-dead.mp3" },
+  { title: "iv-finale-symphony-no6-pathetique-pyotr-ilyich-tchaikovsky", src: "Music/iv-finale-symphony-no6-pathetique-pyotr-ilyich-tchaikovsky.mp3" },
+  { title: "night-on-bald-mountain-noc-na-lysoj-gore", src: "Music/night-on-bald-mountain-noc-na-lysoj-gore.mp3" },
+  { title: "peer-gynt-suite-no-1-morning-mood", src: "Music/peer-gynt-suite-no-1-morning-mood.mp3" },
+  { title: "prelude-opus-28-no-4-in-e-minor-chopin", src: "Music/prelude-opus-28-no-4-in-e-minor-chopin.mp3" },
+  { title: "ravel-pavane-pour-une-infante-defunte", src: "Music/ravel-pavane-pour-une-infante-defunte.mp3" },
+  { title: "romeo-and-juliet-op-64-no-13-dance-of-the-knights-sergei-prokofiev", src: "Music/romeo-and-juliet-op-64-no-13-dance-of-the-knights-sergei-prokofiev.mp3" },
+  { title: "turkymarch", src: "Music/turkymarch.mp3" },
+  { title: "waltz-in-a-minor-opus-34-no-2", src: "Music/waltz-in-a-minor-opus-34-no-2.mp3" },
 ];
 
 const statusMessages = [
@@ -889,7 +902,7 @@ function openApp(appId) {
   const statusEl = windowEl.querySelector(".window-status");
   const closeButton = windowEl.querySelector(".close");
   const minimizeButton = windowEl.querySelector(".minimize");
-  const maximizeButton = windowEl.querySelector(".maximize");
+  const fullscreenButton = windowEl.querySelector(".fullscreen");
 
   titleEl.textContent = definition.title;
   contentEl.append(definition.render());
@@ -922,7 +935,12 @@ function openApp(appId) {
     refreshTaskbarState();
   });
 
-  maximizeButton.addEventListener("click", () => {
+  const stopHeaderDrag = (event) => event.stopPropagation();
+  [minimizeButton, fullscreenButton, closeButton].forEach((button) => {
+    button.addEventListener("pointerdown", stopHeaderDrag);
+  });
+
+  fullscreenButton.addEventListener("click", () => {
     playClickSound();
     const maximized = windowEl.dataset.maximized === "true";
     if (maximized) {
