@@ -1,40 +1,189 @@
 :root {
-  --bg-main: #96a696;
-  --bg-dialog: #e2dbc8;
-  --title-active: #13334c;
-  --title-inactive: #3d5252;
-  --frame-dark: #1b1f21;
-  --frame-mid: #596062;
-  --frame-light: #f0f1e8;
-  --frame-soft: #b9beac;
+  --bg-main: #0a4e8a;
+  --bg-dialog: #c0c0c0;
+  --title-active: #000080;
+  --title-inactive: #6b6b6b;
+  --frame-dark: #3f3f3f;
+  --frame-mid: #7b7b7b;
+  --frame-light: #ffffff;
+  --frame-soft: #d4d0c8;
   --text-main: #111;
-  --taskbar-bg: #b4b9ad;
-  --accent-red: #6a1b1b;
+  --taskbar-bg: #c0c0c0;
+  --accent-red: #7f0000;
+  --content-bg: #efefef;
+  --content-alt-bg: #e8e8e8;
+  --content-pre-bg: #dfdfdf;
+  --window-status-bg: #d6d6d6;
+  --clock-bg: #c0c0c0;
+  --icon-hover: #cdd8f3;
+  --desktop-icon-text: #081013;
+  --boot-screen-bg: #020708;
+  --boot-screen-text: #9ec5c5;
+  --boot-progress-border: #365050;
+  --boot-seg-off: #0e1a1a;
+  --boot-seg-on: #5ca2a2;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%230a4e8a'/%3E%3Crect width='8' height='1' y='1' fill='%230958a0'/%3E%3Crect width='4' height='1' y='4' fill='%23073f71'/%3E%3C/svg%3E");
+  --bg-pattern-size: auto;
 
   font-family: "MS Sans Serif", "Tahoma", "Geneva", monospace;
   font-size: 10px;
   font-weight: 700;
 }
 
-[data-theme="gray"] {
-  --bg-main: #9ca1a2;
-  --bg-dialog: #ddd8cf;
-  --title-active: #23303c;
-  --title-inactive: #4f5a61;
+[data-theme="win95"] {
+  --bg-main: #0a4e8a;
+  --bg-dialog: #c0c0c0;
+  --title-active: #000080;
+  --title-inactive: #6b6b6b;
+  --taskbar-bg: #c0c0c0;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%230a4e8a'/%3E%3Crect width='8' height='1' y='1' fill='%230958a0'/%3E%3Crect width='4' height='1' y='4' fill='%23073f71'/%3E%3C/svg%3E");
 }
 
-[data-theme="teal"] {
-  --bg-main: #8ea79f;
-  --bg-dialog: #e2dcc4;
-  --title-active: #1a4555;
-  --title-inactive: #4a6763;
+[data-theme="plus-nature"] {
+  --bg-main: #5b7f4f;
+  --bg-dialog: #d8d2bb;
+  --title-active: #355a2b;
+  --title-inactive: #6a7f61;
+  --taskbar-bg: #c2b99d;
+  --content-bg: #ece5cc;
+  --content-alt-bg: #f4edd7;
+  --content-pre-bg: #ddd5ba;
+  --window-status-bg: #cec4a6;
+  --icon-hover: #b9ccb0;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Crect width='10' height='10' fill='%235b7f4f'/%3E%3Ccircle cx='2' cy='2' r='1' fill='%236f9461'/%3E%3Ccircle cx='7' cy='6' r='1' fill='%237ca26e'/%3E%3C/svg%3E");
 }
 
-[data-theme="beige"] {
-  --bg-main: #b8b09a;
-  --bg-dialog: #efe6cf;
-  --title-active: #4b4532;
-  --title-inactive: #6d6656;
+[data-theme="plus-space"] {
+  --bg-main: #171a3a;
+  --bg-dialog: #c2c5d6;
+  --title-active: #232c7c;
+  --title-inactive: #545f8e;
+  --taskbar-bg: #aeb3c8;
+  --content-bg: #e0e3f1;
+  --content-alt-bg: #ecedf6;
+  --content-pre-bg: #d2d6eb;
+  --window-status-bg: #c7cce0;
+  --icon-hover: #b6c0e4;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Crect width='12' height='12' fill='%23171a3a'/%3E%3Ccircle cx='2' cy='2' r='1' fill='%23dce4ff'/%3E%3Ccircle cx='8' cy='4' r='1' fill='%23a6b6ff'/%3E%3Ccircle cx='5' cy='9' r='1' fill='%23ffffff'/%3E%3C/svg%3E");
+}
+
+[data-theme="inside-computer"] {
+  --bg-main: #1d4f23;
+  --bg-dialog: #adc8af;
+  --title-active: #0d2f10;
+  --title-inactive: #3d6541;
+  --taskbar-bg: #8bb28f;
+  --content-bg: #d6e8d8;
+  --content-alt-bg: #e5f0e5;
+  --content-pre-bg: #c8dbc8;
+  --window-status-bg: #b8d0b9;
+  --icon-hover: #9fc5a1;
+  --text-main: #041205;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%231d4f23'/%3E%3Cpath d='M0 1h8M0 4h8M0 7h8' stroke='%23286a30' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+[data-theme="active-desktop"] {
+  --bg-main: #3f6cb5;
+  --bg-dialog: #d3dff1;
+  --title-active: #144a92;
+  --title-inactive: #5b79a8;
+  --taskbar-bg: #b7c8e6;
+  --content-bg: #edf3ff;
+  --content-alt-bg: #f6f9ff;
+  --content-pre-bg: #dde8fb;
+  --window-status-bg: #cfddf5;
+  --icon-hover: #d0e0fb;
+  --bg-pattern: radial-gradient(circle at 20% 20%, #5e8fe0 0%, #3f6cb5 60%, #2d4f85 100%);
+}
+
+[data-theme="oem-pc"] {
+  --bg-main: #6e8a98;
+  --bg-dialog: #d9dad2;
+  --title-active: #1b4257;
+  --title-inactive: #526874;
+  --taskbar-bg: #bcc0ba;
+  --content-bg: #ecece5;
+  --content-alt-bg: #f3f3ee;
+  --content-pre-bg: #ddddd6;
+  --window-status-bg: #d3d3cc;
+  --icon-hover: #ced4d1;
+  --bg-pattern: linear-gradient(135deg, #809ba8 25%, #6e8a98 25%, #6e8a98 50%, #809ba8 50%, #809ba8 75%, #6e8a98 75%, #6e8a98 100%);
+  --bg-pattern-size: 10px 10px;
+}
+
+[data-theme="litestep"] {
+  --bg-main: #0b0b0b;
+  --bg-dialog: #1f1f1f;
+  --title-active: #00d18f;
+  --title-inactive: #2d6d53;
+  --frame-dark: #010101;
+  --frame-mid: #1e1e1e;
+  --frame-light: #3de5b1;
+  --taskbar-bg: #121212;
+  --text-main: #8ef5d2;
+  --content-bg: #141414;
+  --content-alt-bg: #1a1a1a;
+  --content-pre-bg: #0f0f0f;
+  --window-status-bg: #101010;
+  --clock-bg: #0e0e0e;
+  --icon-hover: #0e3124;
+  --desktop-icon-text: #a7ffd8;
+  --boot-screen-bg: #000;
+  --boot-screen-text: #00ef9f;
+  --boot-progress-border: #00aa6f;
+  --boot-seg-off: #001f14;
+  --boot-seg-on: #00ef9f;
+  --bg-pattern: repeating-linear-gradient(180deg, #080808 0, #080808 2px, #0f0f0f 2px, #0f0f0f 4px);
+}
+
+[data-theme="high-contrast-retro"] {
+  --bg-main: #000;
+  --bg-dialog: #fff;
+  --title-active: #000;
+  --title-inactive: #333;
+  --frame-dark: #000;
+  --frame-mid: #000;
+  --frame-light: #fff;
+  --taskbar-bg: #fff;
+  --text-main: #000;
+  --content-bg: #fff;
+  --content-alt-bg: #fff;
+  --content-pre-bg: #fff;
+  --window-status-bg: #fff;
+  --clock-bg: #fff;
+  --icon-hover: #ff0;
+  --desktop-icon-text: #fff;
+  --accent-red: #000;
+  --bg-pattern: none;
+}
+
+[data-theme="office-1996"] {
+  --bg-main: #7b8694;
+  --bg-dialog: #d8d4cf;
+  --title-active: #2c3f66;
+  --title-inactive: #5d6876;
+  --taskbar-bg: #b9b6b2;
+  --content-bg: #ece9e4;
+  --content-alt-bg: #f4f2ee;
+  --content-pre-bg: #ddd9d2;
+  --window-status-bg: #cecbc4;
+  --icon-hover: #cad0d8;
+  --bg-pattern: linear-gradient(45deg, #7b8694 25%, #8f99a6 25%, #8f99a6 50%, #7b8694 50%, #7b8694 75%, #8f99a6 75%, #8f99a6 100%);
+  --bg-pattern-size: 12px 12px;
+}
+
+[data-theme="calmira"] {
+  --bg-main: #0a7f7f;
+  --bg-dialog: #c0c0c0;
+  --title-active: #000080;
+  --title-inactive: #666;
+  --taskbar-bg: #c0c0c0;
+  --content-bg: #efefef;
+  --content-alt-bg: #f6f6f6;
+  --content-pre-bg: #e0e0e0;
+  --window-status-bg: #d3d3d3;
+  --icon-hover: #bcd9d9;
+  --bg-pattern: linear-gradient(180deg, #0a8f8f 0%, #0a7f7f 100%);
 }
 
 * {
@@ -52,7 +201,8 @@ body {
 
 body {
   background-color: var(--bg-main);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%2396a696'/%3E%3Crect width='4' height='1' x='0' y='1' fill='%23849082'/%3E%3Crect width='2' height='1' x='5' y='4' fill='%2379837e'/%3E%3Crect width='1' height='1' x='2' y='6' fill='%23a8b6a5'/%3E%3C/svg%3E");
+  background-image: var(--bg-pattern);
+  background-size: var(--bg-pattern-size);
   color: var(--text-main);
   overflow: hidden;
 }
@@ -81,7 +231,7 @@ textarea {
   min-height: 56px;
   border: 1px solid transparent;
   background: transparent;
-  color: #081013;
+  color: var(--desktop-icon-text);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -94,7 +244,7 @@ textarea {
 .desktop-icon:hover,
 .desktop-icon:focus-visible {
   border: 1px dotted #111;
-  background: #b9c4bc;
+  background: var(--icon-hover);
 }
 
 .desktop-icon span:last-child {
@@ -184,13 +334,13 @@ textarea {
   border-left: 1px solid var(--frame-light);
   border-right: 1px solid var(--frame-dark);
   border-bottom: 1px solid var(--frame-dark);
-  background: #c3c7bc;
+  background: var(--clock-bg);
 }
 
 .clock {
   min-width: 60px;
   text-align: center;
-  background: #c3c7bc;
+  background: var(--clock-bg);
   border-top: 2px solid var(--frame-mid);
   border-left: 2px solid var(--frame-mid);
   border-right: 2px solid var(--frame-light);
@@ -202,7 +352,7 @@ textarea {
   position: fixed;
   left: 2px;
   bottom: 30px;
-  width: 250px;
+  width: 340px;
   display: grid;
   grid-template-columns: 20px 1fr;
   background: var(--taskbar-bg);
@@ -247,7 +397,7 @@ textarea {
 
 .theme-switcher {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr;
   gap: 2px;
 }
 
@@ -308,7 +458,7 @@ textarea {
   border-left: 2px solid var(--frame-mid);
   border-right: 2px solid var(--frame-light);
   border-bottom: 2px solid var(--frame-light);
-  background: #e5dfcf;
+  background: var(--content-bg);
   line-height: 1.2;
 }
 
@@ -320,7 +470,7 @@ textarea {
   border-left: 2px solid var(--frame-mid);
   border-right: 2px solid var(--frame-light);
   border-bottom: 2px solid var(--frame-light);
-  background: #f0ebdc;
+  background: var(--content-alt-bg);
   padding: 2px;
 }
 
@@ -334,7 +484,7 @@ textarea {
   border-left: 2px solid var(--frame-mid);
   border-right: 2px solid var(--frame-light);
   border-bottom: 2px solid var(--frame-light);
-  background: #ddd6c0;
+  background: var(--content-pre-bg);
   font-family: "Courier New", monospace;
   font-size: 9px;
   line-height: 1.2;
@@ -390,14 +540,14 @@ textarea {
   padding: 2px 4px;
   min-height: 16px;
   border-top: 1px solid var(--frame-mid);
-  background: #cbc4ae;
+  background: var(--window-status-bg);
 }
 
 .boot-screen {
   position: fixed;
   inset: 0;
-  background: #020708;
-  color: #9ec5c5;
+  background: var(--boot-screen-bg);
+  color: var(--boot-screen-text);
   padding: 16px;
 }
 
@@ -409,7 +559,7 @@ textarea {
 
 .boot-progress {
   width: 240px;
-  border: 2px solid #365050;
+  border: 2px solid var(--boot-progress-border);
   padding: 2px;
 }
 
@@ -421,11 +571,11 @@ textarea {
 }
 
 .boot-seg {
-  background: #0e1a1a;
+  background: var(--boot-seg-off);
 }
 
 .boot-seg.on {
-  background: #5ca2a2;
+  background: var(--boot-seg-on);
 }
 
 .boot-hint {
