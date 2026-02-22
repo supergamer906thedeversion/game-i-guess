@@ -117,8 +117,8 @@ function playSlideWhistle(duration = 1.32) {
   const osc = audioContext.createOscillator();
   const gain = audioContext.createGain();
   osc.type = "triangle";
-  osc.frequency.setValueAtTime(320, now);
-  osc.frequency.exponentialRampToValueAtTime(980, now + duration);
+  osc.frequency.setValueAtTime(980, now);
+  osc.frequency.exponentialRampToValueAtTime(320, now + duration);
   gain.gain.setValueAtTime(0.0001, now);
   gain.gain.exponentialRampToValueAtTime(0.06, now + 0.04);
   gain.gain.exponentialRampToValueAtTime(0.02, now + duration * 0.84);
