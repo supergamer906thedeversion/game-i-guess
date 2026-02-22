@@ -7,7 +7,15 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <section class="boot-screen" id="boot-screen" aria-live="polite">
+  <section class="ng-intro" id="ng-intro" aria-hidden="true">
+    <div class="ng-stage" id="ng-stage">
+      <div class="ng-logo" id="ng-logo" aria-label="Newgrounds tank logo">
+        <img class="ng-logo-image" src="as.png" alt="Newgrounds tank logo" />
+      </div>
+    </div>
+  </section>
+
+  <section class="boot-screen hidden" id="boot-screen" aria-live="polite">
     <pre class="bios-log" id="bios-log">AIRPORT BIOS v2.1
 CPU: TERMINAL CONTROL UNIT @ 66MHZ
 MEMORY TEST: 00000 KB</pre>

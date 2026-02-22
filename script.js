@@ -6,6 +6,8 @@ const taskbar = document.getElementById("taskbar");
 const taskbarApps = document.getElementById("taskbar-apps");
 const clock = document.getElementById("clock");
 const bootScreen = document.getElementById("boot-screen");
+const ngIntro = document.getElementById("ng-intro");
+const ngLogo = document.getElementById("ng-logo");
 const biosLog = document.getElementById("bios-log");
 const bootSegments = document.getElementById("boot-progress-segments");
 const systemMessage = document.getElementById("system-message");
@@ -103,6 +105,109 @@ function playStartupChime() {
   beep({ frequency: 260, duration: 0.09, volume: 0.025 });
   setTimeout(() => beep({ frequency: 390, duration: 0.08, volume: 0.025 }), 90);
   setTimeout(() => beep({ frequency: 520, duration: 0.08, volume: 0.025 }), 180);
+}
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function playSlideWhistle(duration = 1.32) {
+  ensureAudio();
+  const now = audioContext.currentTime;
+  const osc = audioContext.createOscillator();
+  const gain = audioContext.createGain();
+  osc.type = "triangle";
+  osc.frequency.setValueAtTime(320, now);
+  osc.frequency.exponentialRampToValueAtTime(980, now + duration);
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.06, now + 0.04);
+  gain.gain.exponentialRampToValueAtTime(0.02, now + duration * 0.84);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+  osc.connect(gain);
+  gain.connect(audioContext.destination);
+  osc.start(now);
+  osc.stop(now + duration + 0.02);
+}
+
+function playImpactThunk() {
+  ensureAudio();
+  const now = audioContext.currentTime;
+  const tone = audioContext.createOscillator();
+  const toneGain = audioContext.createGain();
+  tone.type = "square";
+  tone.frequency.setValueAtTime(160, now);
+  tone.frequency.exponentialRampToValueAtTime(70, now + 0.14);
+  toneGain.gain.setValueAtTime(0.07, now);
+  toneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+  tone.connect(toneGain);
+  toneGain.connect(audioContext.destination);
+
+  const noiseBuffer = audioContext.createBuffer(1, Math.floor(audioContext.sampleRate * 0.2), audioContext.sampleRate);
+  const data = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < data.length; i += 1) {
+    data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+  }
+  const noise = audioContext.createBufferSource();
+  noise.buffer = noiseBuffer;
+  const noiseGain = audioContext.createGain();
+  noiseGain.gain.setValueAtTime(0.07, now);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+  noise.connect(noiseGain);
+  noiseGain.connect(audioContext.destination);
+
+  tone.start(now);
+  tone.stop(now + 0.2);
+  noise.start(now);
+  noise.stop(now + 0.12);
+}
+
+async function playNewgroundsIntro() {
+  if (!ngIntro || !ngLogo) return;
+
+  ngLogo.style.top = "-180px";
+  ngLogo.style.transform = "translateX(-50%) rotate(-9deg)";
+
+  playSlideWhistle();
+  await delay(300);
+
+  const targetY = Math.round(window.innerHeight * 0.34);
+  const dropDuration = 1000;
+  const start = performance.now();
+
+  await new Promise((resolve) => {
+    function animate(now) {
+      const t = Math.min(1, (now - start) / dropDuration);
+      const eased = t * t;
+      const y = -180 + (targetY + 180) * eased;
+      const tilt = -10 + t * 3;
+      ngLogo.style.top = `${y}px`;
+      ngLogo.style.transform = `translateX(-50%) rotate(${tilt}deg)`;
+      if (t < 1) requestAnimationFrame(animate);
+      else resolve();
+    }
+    requestAnimationFrame(animate);
+  });
+
+  playImpactThunk();
+  ngIntro.classList.add("shake");
+  setTimeout(() => ngIntro.classList.remove("shake"), 180);
+
+  await new Promise((resolve) => {
+    ngLogo.animate(
+      [
+        { top: `${targetY}px`, transform: "translateX(-50%) rotate(-7deg)" },
+        { top: `${targetY + 24}px`, transform: "translateX(-50%) rotate(-6deg)", offset: 0.35 },
+        { top: `${targetY - 6}px`, transform: "translateX(-50%) rotate(-7deg)", offset: 0.7 },
+        { top: `${targetY}px`, transform: "translateX(-50%) rotate(-6.5deg)" }
+      ],
+      { duration: 500, easing: "ease-out", fill: "forwards" }
+    ).onfinish = resolve;
+  });
+
+  await delay(500);
+  ngIntro.classList.add("fade-out");
+  await delay(650);
+  ngIntro.classList.add("hidden");
 }
 
 function pickRandomTrackIndex() {
@@ -944,7 +1049,13 @@ setupDesktopInteractions();
 updateClock();
 setInterval(updateClock, 1000);
 setInterval(showRandomSystemMessage, 4000);
-bootSequence();
+bootScreen.classList.add("hidden");
+
+(async () => {
+  await playNewgroundsIntro();
+  bootScreen.classList.remove("hidden");
+  bootSequence();
+})();
 
 document.querySelectorAll('.start-menu [data-app]').forEach((button)=>{ button.addEventListener('click',()=>{ playClickSound(); openApp(button.dataset.app); toggleStartMenu(false); }); });
 document.querySelectorAll('[data-theme]').forEach((button)=>{ button.addEventListener('click',()=>{ playClickSound(); applyTheme(button.dataset.theme); }); });

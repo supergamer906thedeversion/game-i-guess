@@ -543,6 +543,60 @@ textarea {
   background: var(--window-status-bg);
 }
 
+
+.ng-intro {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 9000;
+  overflow: hidden;
+}
+
+.ng-stage {
+  position: absolute;
+  inset: 0;
+}
+
+.ng-logo {
+  position: absolute;
+  left: 50%;
+  top: -180px;
+  width: min(50vw, 340px);
+  aspect-ratio: 1.5;
+  transform: translateX(-50%) rotate(-9deg);
+  filter: drop-shadow(0 12px 8px rgba(0, 0, 0, 0.55));
+}
+
+.ng-logo-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.ng-intro.fade-out {
+  animation: ng-fade-out 0.65s ease forwards;
+}
+
+.ng-intro.shake {
+  animation: ng-shake 0.16s ease;
+}
+
+@keyframes ng-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes ng-shake {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3px, 2px); }
+  40% { transform: translate(3px, -2px); }
+  60% { transform: translate(-2px, 1px); }
+  80% { transform: translate(2px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
 .boot-screen {
   position: fixed;
   inset: 0;
