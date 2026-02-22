@@ -769,299 +769,187 @@ function createSystemsPanel() {
 }
 
 const appDefs = {
-  systems: {
-    title: "AIRPORT CONTROL PANEL",
-    status: "3 AIRCRAFT SELECTED",
-    render: () => createSystemsPanel()
-  },
+  systems: { title: "AIRPORT CONTROL PANEL", status: "3 AIRCRAFT SELECTED", render: () => createSystemsPanel() },
   hangar: {
-    title: "HANGAR MANAGER",
-    status: "GATE 4 ACTIVE",
-    render: () => {
+    title: "HANGAR MANAGER", status: "GATE 4 ACTIVE", render: () => {
       const wrapper = document.createElement("div");
-      wrapper.innerHTML = `
-        <p><strong>MAINTENANCE MODULE</strong></p>
-        <p>BAY A1: SERVICE FLAG 0x03</p>
-        <p>BAY B2: SERVICE FLAG 0x01</p>
-        <p>BAY C3: SERVICE FLAG 0x08</p>
-        <label><input type="checkbox" checked /> ENABLE TOOL INVENTORY</label>
-      `;
+      wrapper.innerHTML = `<p><strong>MAINTENANCE MODULE</strong></p><p>BAY A1: SERVICE FLAG 0x03</p><p>BAY B2: SERVICE FLAG 0x01</p><p>BAY C3: SERVICE FLAG 0x08</p><label><input type="checkbox" checked /> ENABLE TOOL INVENTORY</label>`;
       return wrapper;
     }
   },
   radar: {
-    title: "RADAR CONTROL",
-    status: "MEMORY USAGE: 4MB",
-    render: () => {
+    title: "RADAR CONTROL", status: "MEMORY USAGE: 4MB", render: () => {
       const wrapper = document.createElement("div");
-      wrapper.innerHTML = `
-        <p><strong>TRANSPONDER DIAGNOSTICS</strong></p>
-        <p>SECTOR N2 | TARGETS: 19 | CPU: 42%</p>
-        <p>SECTOR E1 | TARGETS: 11 | CPU: 38%</p>
-        <p>SECTOR S4 | TARGETS: 23 | CPU: 57%</p>
-        <label><input type="checkbox" checked /> FILTER GROUND TRAFFIC</label>
-      `;
+      wrapper.innerHTML = `<p><strong>TRANSPONDER DIAGNOSTICS</strong></p><p>SECTOR N2 | TARGETS: 19 | CPU: 42%</p><p>SECTOR E1 | TARGETS: 11 | CPU: 38%</p><p>SECTOR S4 | TARGETS: 23 | CPU: 57%</p><label><input type="checkbox" checked /> FILTER GROUND TRAFFIC</label>`;
       return wrapper;
     }
   },
   runway: {
-    title: "RUNWAY MONITOR",
-    status: "RUNWAY FLAG: 0X7A",
-    render: () => {
+    title: "RUNWAY MONITOR", status: "RUNWAY FLAG: 0X7A", render: () => {
       const wrapper = document.createElement("div");
-      wrapper.innerHTML = `
-        <p><strong>RUNWAY QUEUE UTILITY</strong></p>
-        <p>R1: AC-2041 READY</p>
-        <p>R2: VX-5503 HOLD SHORT</p>
-        <p>R3: BR-0912 TAXIING</p>
-        <label><input type="checkbox" /> ENABLE EMERGENCY CHANNEL</label>
-      `;
+      wrapper.innerHTML = `<p><strong>RUNWAY QUEUE UTILITY</strong></p><p>R1: AC-2041 READY</p><p>R2: VX-5503 HOLD SHORT</p><p>R3: BR-0912 TAXIING</p><label><input type="checkbox" /> ENABLE EMERGENCY CHANNEL</label>`;
       return wrapper;
     }
   },
-  archive: {
-    title: "ARCHIVE TERMINAL",
-    status: "TERMINAL QUEUE: 12",
-    render: () => createMusicPlayer()
-  }
+  archive: { title: "ARCHIVE TERMINAL", status: "TERMINAL QUEUE: 12", render: () => createMusicPlayer() },
+  about: { title: "ABOUT AIRPORTOS", status: "VERSION 1.0", render: () => { const w=document.createElement('div'); w.innerHTML='<p><strong>AirportOS 1.0</strong></p><p>Built for immersive airport management simulation.</p><p>Developer Credits: Terminal Systems Team</p><p>Version history: 0.9 prototype, 1.0 immersive shell.</p>'; return w; } },
+  control: { title: "CONTROL PANEL", status: "SETTINGS", render: () => { const w=document.createElement('div'); w.innerHTML='<p><strong>SYSTEM SETTINGS</strong></p><p><label>Display Contrast <input type="range" min="70" max="130" value="100" data-setting="contrast"></label></p><p><label>Sound <input type="checkbox" checked data-setting="sound"></label></p><p><label>Mouse Speed <input type="range" min="1" max="10" value="5"></label></p><p><label>Screensaver <input type="checkbox"></label></p>'; return w;} },
+  explorer: { title: "FILE EXPLORER", status: "C:\\", render: () => { const w=document.createElement('div'); w.innerHTML='<p><strong>ROOT DIRECTORY</strong></p><pre class="tree">C:\\\\n ├ AIRPORT\n ├ SYSTEM\n ├ LOGS\n ├ FLIGHTS\n ├ README.TXT\n └ MANUAL.DOC</pre>'; return w;} },
+  monitor: { title: "SYSTEM MONITOR", status: "NOMINAL", render: () => { const w=document.createElement('div'); w.innerHTML=`<p>CPU: ${Math.floor(20+Math.random()*60)}%</p><p>MEMORY: ${Math.floor(18+Math.random()*50)} MB</p><p>RADAR LATENCY: ${Math.floor(12+Math.random()*20)} ms</p><p>AIRPORT STATUS: OPERATIONAL</p>`; return w;} },
+  terminal: { title: "TERMINAL", status: "COMMAND", render: () => { const w=document.createElement('div'); w.innerHTML='<p>C:\\> help</p><p>DIR   Lists files</p><p>TIME  Shows current time</p><p>EXIT  Close terminal</p>'; return w;} },
+  help: { title: "HELP VIEWER", status: "DOCS", render: () => { const w=document.createElement('div'); w.innerHTML='<p><strong>README.TXT</strong></p><p>Welcome to AirportOS. Double-click icons to launch modules.</p><p>Right-click desktop for wallpaper + refresh.</p><p>Drag icons to reposition. Settings are persisted.</p>'; return w;} }
 };
 
+const persisted = JSON.parse(localStorage.getItem('airportOS_ui_state') || '{}');
+const desktopMenu = document.getElementById('desktop-menu');
+const selectionBox = document.getElementById('selection-box');
+const wizard = document.getElementById('setup-wizard');
+const wizardFinish = document.getElementById('wizard-finish');
+const bootPhase = document.getElementById('boot-phase');
+const bootHint = document.getElementById('boot-hint');
+const bootModules = document.getElementById('boot-modules');
+const bootProgressFill = document.getElementById('boot-progress-fill');
+
+const uiState = {
+  firstBootDone: Boolean(persisted.firstBootDone),
+  username: persisted.username || 'TOWER_OP',
+  timezone: persisted.timezone || 'UTC',
+  theme: persisted.theme || 'win95',
+  wallpaper: persisted.wallpaper || 'default',
+  iconPositions: persisted.iconPositions || {},
+  openApps: persisted.openApps || []
+};
+
+function saveUiState() {
+  uiState.openApps = Array.from(openWindows.keys());
+  localStorage.setItem('airportOS_ui_state', JSON.stringify(uiState));
+}
+
+function applyTheme(theme){ document.body.setAttribute('data-theme', theme); uiState.theme=theme; saveUiState(); }
+function applyWallpaper() {
+  if (uiState.wallpaper === 'grid') document.body.style.backgroundImage = 'repeating-linear-gradient(0deg,#0a4e8a 0 2px,#0d5d9f 2px 4px), repeating-linear-gradient(90deg,#0a4e8a 0 2px,#0d5d9f 2px 4px)';
+  else if (uiState.wallpaper === 'tarmac') document.body.style.backgroundImage = 'repeating-linear-gradient(45deg,#27404f 0 6px,#1f3340 6px 12px)';
+  else document.body.style.backgroundImage = '';
+}
+
 function updateClock() {
-  clock.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const colon = now.getSeconds() % 2 === 0 ? ':' : ' ';
+  clock.textContent = `${hh}${colon}${mm}`;
+  clock.title = now.toString();
 }
 
-function refreshTaskbarState() {
-  openWindows.forEach(({ window, taskButton }) => {
-    taskButton.classList.toggle("active", window.classList.contains("active") && !window.classList.contains("hidden"));
-  });
-}
-
-function focusWindow(win) {
-  document.querySelectorAll(".window").forEach((w) => w.classList.remove("active"));
-  win.classList.add("active");
-  z += 1;
-  win.style.zIndex = String(z);
-  refreshTaskbarState();
-}
+function refreshTaskbarState() { openWindows.forEach(({ window, taskButton }) => taskButton.classList.toggle('active', window.classList.contains('active') && !window.classList.contains('hidden'))); }
+function focusWindow(win) { document.querySelectorAll('.window').forEach((w)=>w.classList.remove('active')); win.classList.add('active'); z += 1; win.style.zIndex = String(z); refreshTaskbarState(); }
 
 function createTaskbarButton(title, windowEl) {
-  const button = document.createElement("button");
-  button.className = "taskbar-app";
-  button.textContent = title;
-  button.title = "Toggle module window";
-  button.addEventListener("click", () => {
-    playClickSound();
-    const hidden = windowEl.classList.toggle("hidden");
-    if (!hidden) {
-      focusWindow(windowEl);
-    } else {
-      windowEl.classList.remove("active");
-      refreshTaskbarState();
-    }
-  });
-  taskbarApps.append(button);
-  return button;
+  const button = document.createElement('button'); button.className = 'taskbar-app'; button.textContent = title; button.title='Toggle module window';
+  button.addEventListener('click', ()=>{ playClickSound(); const hidden=windowEl.classList.toggle('hidden'); if(!hidden) focusWindow(windowEl); else {windowEl.classList.remove('active'); refreshTaskbarState();} saveUiState(); });
+  taskbarApps.append(button); return button;
 }
 
 function makeDraggable(windowEl, dragHandle) {
-  let active = false;
-  let offsetX = 0;
-  let offsetY = 0;
-
-  dragHandle.addEventListener("pointerdown", (event) => {
-    active = true;
-    focusWindow(windowEl);
-    const rect = windowEl.getBoundingClientRect();
-    offsetX = event.clientX - rect.left;
-    offsetY = event.clientY - rect.top;
-    dragHandle.setPointerCapture(event.pointerId);
-  });
-
-  dragHandle.addEventListener("pointermove", (event) => {
-    if (!active) return;
-    windowEl.style.left = `${Math.max(0, event.clientX - offsetX)}px`;
-    windowEl.style.top = `${Math.max(0, event.clientY - offsetY)}px`;
-  });
-
-  dragHandle.addEventListener("pointerup", (event) => {
-    active = false;
-    dragHandle.releasePointerCapture(event.pointerId);
-  });
+  let active=false, offsetX=0, offsetY=0;
+  dragHandle.addEventListener('pointerdown',(event)=>{ active=true; focusWindow(windowEl); const rect=windowEl.getBoundingClientRect(); offsetX=event.clientX-rect.left; offsetY=event.clientY-rect.top; dragHandle.setPointerCapture(event.pointerId); document.body.style.cursor='move';});
+  dragHandle.addEventListener('pointermove',(event)=>{ if(!active) return; windowEl.style.left=`${Math.max(0,event.clientX-offsetX)}px`; windowEl.style.top=`${Math.max(0,event.clientY-offsetY)}px`; });
+  dragHandle.addEventListener('pointerup',(event)=>{ active=false; document.body.style.cursor='default'; dragHandle.releasePointerCapture(event.pointerId); });
 }
 
 function openApp(appId) {
-  if (openWindows.has(appId)) {
-    const existing = openWindows.get(appId);
-    existing.window.classList.remove("hidden");
-    focusWindow(existing.window);
-    return;
-  }
-
-  const definition = appDefs[appId];
-  if (!definition) {
-    playErrorSound();
-    return;
-  }
-
+  if (openWindows.has(appId)) { const existing = openWindows.get(appId); existing.window.classList.remove('hidden'); focusWindow(existing.window); return; }
+  const definition = appDefs[appId]; if (!definition) { playErrorSound(); return; }
   const windowEl = template.content.firstElementChild.cloneNode(true);
-  const titleEl = windowEl.querySelector(".window-title");
-  const headerEl = windowEl.querySelector(".window-header");
-  const contentEl = windowEl.querySelector(".window-content");
-  const statusEl = windowEl.querySelector(".window-status");
-  const closeButton = windowEl.querySelector(".close");
-  const minimizeButton = windowEl.querySelector(".minimize");
-  const fullscreenButton = windowEl.querySelector(".fullscreen");
-
-  titleEl.textContent = definition.title;
-  contentEl.append(definition.render());
-  statusEl.textContent = definition.status || statusMessages[Math.floor(Math.random() * statusMessages.length)];
-
-  windowEl.style.left = `${80 + openWindows.size * 22 + Math.floor(Math.random() * 6)}px`;
-  windowEl.style.top = `${36 + openWindows.size * 18 + Math.floor(Math.random() * 6)}px`;
-
-  makeDraggable(windowEl, headerEl);
-  windowEl.addEventListener("pointerdown", () => focusWindow(windowEl));
-
+  const titleEl = windowEl.querySelector('.window-title'); const headerEl = windowEl.querySelector('.window-header'); const contentEl = windowEl.querySelector('.window-content'); const statusEl = windowEl.querySelector('.window-status'); const closeButton = windowEl.querySelector('.close'); const minimizeButton = windowEl.querySelector('.minimize'); const fullscreenButton = windowEl.querySelector('.fullscreen');
+  titleEl.textContent = definition.title; contentEl.append(definition.render()); statusEl.textContent = definition.status || statusMessages[Math.floor(Math.random()*statusMessages.length)];
+  windowEl.style.left = `${80 + openWindows.size * 22}px`; windowEl.style.top = `${36 + openWindows.size * 18}px`; windowEl.classList.add('opening');
+  makeDraggable(windowEl, headerEl); windowEl.addEventListener('pointerdown', ()=>focusWindow(windowEl));
   const taskButton = createTaskbarButton(definition.title, windowEl);
-
-  closeButton.addEventListener("click", () => {
-    playClickSound();
-    windowEl.querySelectorAll("audio").forEach((audioEl) => {
-      audioEl.pause();
-      audioEl.currentTime = 0;
-    });
-    taskButton.remove();
-    windowEl.remove();
-    openWindows.delete(appId);
-    refreshTaskbarState();
-  });
-
-  minimizeButton.addEventListener("click", () => {
-    playClickSound();
-    windowEl.classList.add("hidden");
-    windowEl.classList.remove("active");
-    refreshTaskbarState();
-  });
-
-  const stopHeaderDrag = (event) => event.stopPropagation();
-  [minimizeButton, fullscreenButton, closeButton].forEach((button) => {
-    button.addEventListener("pointerdown", stopHeaderDrag);
-  });
-
-  fullscreenButton.addEventListener("click", () => {
-    playClickSound();
-    const maximized = windowEl.dataset.maximized === "true";
-    if (maximized) {
-      windowEl.style.left = windowEl.dataset.prevLeft;
-      windowEl.style.top = windowEl.dataset.prevTop;
-      windowEl.style.width = windowEl.dataset.prevWidth;
-      windowEl.style.height = windowEl.dataset.prevHeight;
-      windowEl.dataset.maximized = "false";
-      return;
-    }
-    windowEl.dataset.prevLeft = windowEl.style.left;
-    windowEl.dataset.prevTop = windowEl.style.top;
-    windowEl.dataset.prevWidth = windowEl.style.width || "";
-    windowEl.dataset.prevHeight = windowEl.style.height || "";
-    windowEl.style.left = "0px";
-    windowEl.style.top = "0px";
-    windowEl.style.width = "calc(100vw - 4px)";
-    windowEl.style.height = "calc(100vh - 32px)";
-    windowEl.dataset.maximized = "true";
-  });
-
-  setTimeout(() => {
-    desktop.append(windowEl);
-    openWindows.set(appId, { window: windowEl, taskButton });
-    focusWindow(windowEl);
-    playOpenSound();
-  }, 80 + Math.floor(Math.random() * 80));
+  closeButton.addEventListener('click', ()=>{ playClickSound(); windowEl.classList.add('closing'); setTimeout(()=>{taskButton.remove();windowEl.remove();openWindows.delete(appId);refreshTaskbarState();saveUiState();},120); });
+  minimizeButton.addEventListener('click', ()=>{ playClickSound(); windowEl.classList.add('minimizing'); setTimeout(()=>{windowEl.classList.add('hidden');windowEl.classList.remove('active','minimizing');refreshTaskbarState();},110); saveUiState();});
+  [minimizeButton, fullscreenButton, closeButton].forEach((b)=>b.addEventListener('pointerdown',(e)=>e.stopPropagation()));
+  fullscreenButton.addEventListener('click', ()=>{ playClickSound(); const m=windowEl.dataset.maximized==='true'; if(m){ windowEl.style.left=windowEl.dataset.prevLeft;windowEl.style.top=windowEl.dataset.prevTop;windowEl.style.width=windowEl.dataset.prevWidth;windowEl.style.height=windowEl.dataset.prevHeight;windowEl.dataset.maximized='false'; return;} windowEl.dataset.prevLeft=windowEl.style.left;windowEl.dataset.prevTop=windowEl.style.top;windowEl.dataset.prevWidth=windowEl.style.width||'';windowEl.dataset.prevHeight=windowEl.style.height||'';windowEl.style.left='0px';windowEl.style.top='0px';windowEl.style.width='calc(100vw - 4px)';windowEl.style.height='calc(100vh - 32px)';windowEl.dataset.maximized='true';});
+  desktop.append(windowEl); requestAnimationFrame(()=>windowEl.classList.remove('opening')); openWindows.set(appId, { window: windowEl, taskButton }); focusWindow(windowEl); playOpenSound(); saveUiState();
 }
 
-function toggleStartMenu(force) {
-  const shouldOpen = force ?? startMenu.classList.contains("hidden");
-  startMenu.classList.toggle("hidden", !shouldOpen);
-  startButton.setAttribute("aria-expanded", String(shouldOpen));
+function positionIcons() {
+  const icons=[...document.querySelectorAll('.desktop-icon')];
+  const colW=84,rowH=72,maxRows=Math.max(1,Math.floor((window.innerHeight-34)/rowH));
+  icons.forEach((icon,idx)=>{const saved=uiState.iconPositions[icon.dataset.app]; if(saved){icon.style.left=saved.left; icon.style.top=saved.top; return;} const col=Math.floor(idx/maxRows),row=idx%maxRows; icon.style.left=`${6+col*colW}px`;icon.style.top=`${6+row*rowH}px`;});
+}
+function saveIconPosition(icon){ uiState.iconPositions[icon.dataset.app]={left:icon.style.left,top:icon.style.top}; saveUiState(); }
+function setupDesktopInteractions(){
+  let selected=null;
+  document.querySelectorAll('.desktop-icon').forEach((icon)=>{
+    let active=false,ox=0,oy=0,moved=false,clickTimer;
+    icon.addEventListener('click',()=>{document.querySelectorAll('.desktop-icon').forEach(i=>i.classList.remove('selected'));icon.classList.add('selected'); selected=icon;});
+    icon.addEventListener('dblclick',()=>{playClickSound(); openApp(icon.dataset.app);});
+    icon.addEventListener('pointerdown',(e)=>{active=true;moved=false;const r=icon.getBoundingClientRect();ox=e.clientX-r.left;oy=e.clientY-r.top; icon.setPointerCapture(e.pointerId);});
+    icon.addEventListener('pointermove',(e)=>{if(!active) return; moved=true; icon.style.left=`${Math.max(2,e.clientX-ox)}px`; icon.style.top=`${Math.max(2,e.clientY-oy)}px`;});
+    icon.addEventListener('pointerup',(e)=>{active=false;icon.releasePointerCapture(e.pointerId); if(moved){const snapX=Math.round(parseInt(icon.style.left,10)/84)*84+6;const snapY=Math.round(parseInt(icon.style.top,10)/72)*72+6; icon.style.left=`${snapX}px`;icon.style.top=`${snapY}px`; saveIconPosition(icon);} clearTimeout(clickTimer); clickTimer=setTimeout(()=>{},250);});
+  });
+
+  desktop.addEventListener('click',(e)=>{ if(e.target===desktop){document.querySelectorAll('.desktop-icon').forEach(i=>i.classList.remove('selected')); selected=null;} desktopMenu.classList.add('hidden'); });
+  desktop.addEventListener('contextmenu',(e)=>{e.preventDefault(); desktopMenu.style.left=`${e.clientX}px`; desktopMenu.style.top=`${e.clientY}px`; desktopMenu.classList.remove('hidden');});
+  desktopMenu.addEventListener('click',(e)=>{ const action=e.target.dataset.action; if(action==='refresh'){playClickSound(); positionIcons();}
+    if(action==='wallpaper'){playClickSound(); uiState.wallpaper = uiState.wallpaper==='default' ? 'grid' : uiState.wallpaper==='grid' ? 'tarmac' : 'default'; applyWallpaper(); saveUiState();}
+    if(action==='rename' && selected){ const name=prompt('Rename icon:', selected.querySelector('span:last-child').textContent); if(name){selected.querySelector('span:last-child').textContent=name;} }
+    desktopMenu.classList.add('hidden');
+  });
+
+  let sx=0,sy=0,selecting=false;
+  desktop.addEventListener('pointerdown',(e)=>{ if(e.target!==desktop) return; selecting=true;sx=e.clientX;sy=e.clientY; selectionBox.classList.remove('hidden'); selectionBox.style.left=`${sx}px`;selectionBox.style.top=`${sy}px`;selectionBox.style.width='1px';selectionBox.style.height='1px';});
+  desktop.addEventListener('pointermove',(e)=>{ if(!selecting) return; const x=Math.min(sx,e.clientX),y=Math.min(sy,e.clientY),w=Math.abs(e.clientX-sx),h=Math.abs(e.clientY-sy); selectionBox.style.left=`${x}px`;selectionBox.style.top=`${y}px`;selectionBox.style.width=`${w}px`;selectionBox.style.height=`${h}px`; document.querySelectorAll('.desktop-icon').forEach((icon)=>{const r=icon.getBoundingClientRect(); const hit=!(r.right<x||r.left>x+w||r.bottom<y||r.top>y+h); icon.classList.toggle('selected',hit);});});
+  desktop.addEventListener('pointerup',()=>{ selecting=false; selectionBox.classList.add('hidden'); });
 }
 
-function showRandomSystemMessage() {
-  if (!systemMessage.classList.contains("hidden")) return;
-  if (Math.random() > 0.015) return;
-  systemMessageText.textContent = fakeErrors[Math.floor(Math.random() * fakeErrors.length)];
-  systemMessage.classList.remove("hidden");
-  playErrorSound();
-}
+function toggleStartMenu(force) { const shouldOpen = force ?? startMenu.classList.contains('hidden'); startMenu.classList.toggle('hidden', !shouldOpen); startButton.setAttribute('aria-expanded', String(shouldOpen)); }
+function showRandomSystemMessage() { if (!systemMessage.classList.contains('hidden')) return; if (Math.random() > 0.02) return; systemMessageText.textContent = fakeErrors[Math.floor(Math.random()*fakeErrors.length)] || 'Radar module responding slowly.'; systemMessage.classList.remove('hidden'); playErrorSound(); }
 
 function bootSequence() {
-  for (let i = 0; i < 20; i += 1) {
-    const seg = document.createElement("span");
-    seg.className = "boot-seg";
-    bootSegments.append(seg);
-  }
-
-  let memory = 0;
-  let segCount = 0;
-  const bootTimer = setInterval(() => {
-    memory += Math.floor(Math.random() * 180 + 120);
-    biosLog.textContent = `AIRPORTOS BIOS v1.96\nCPU: TERMINAL CONTROL UNIT\nMEMORY TEST: ${String(memory).padStart(4, "0")} KB\nDETECTING DRIVES... OK\nINITIALIZING AIRPORTOS...`;
-
-    const segments = bootSegments.querySelectorAll(".boot-seg");
-    if (segCount < segments.length) {
-      segments[segCount].classList.add("on");
-      segCount += 1;
-    }
-
-    if (segCount >= segments.length) {
-      clearInterval(bootTimer);
-      setTimeout(() => {
-        bootScreen.classList.add("hidden");
-        desktop.classList.remove("hidden");
-        taskbar.classList.remove("hidden");
-        playStartupChime();
-      }, 220);
-    }
-  }, 90);
+  const lines = [
+    'Airport BIOS v2.1', 'Checking RAM........ 65536 KB OK', 'Initializing Runway Controller... OK', 'Detecting ATC Hardware... OK', 'Keyboard detected', 'HDD detected', 'POST: Single Beep',
+    'Loading AIRPORT.SYS', 'Loading RADAR.DRV', 'Loading TERMINAL.SVC', 'Starting Terminal Services...', 'Starting Desktop Shell...'
+  ];
+  let i=0, mem=0;
+  const timer=setInterval(()=>{
+    mem = Math.min(65536, mem + Math.floor(Math.random()*7000+2600));
+    const phase = i < 6 ? 'BIOS PHASE' : 'LOADING MODULES';
+    bootPhase.textContent = phase;
+    biosLog.textContent = `AIRPORT BIOS v2.1\nCPU: TERMINAL CONTROL UNIT @ 66MHZ\nMEMORY TEST: ${String(mem).padStart(5,'0')} KB\n${lines.slice(0, Math.max(1,Math.min(i,6))).join('\n')}`;
+    bootModules.textContent = lines.slice(6, i+1).join('\n');
+    bootProgressFill.style.width = `${Math.min(100, (i+1)/lines.length*100)}%`;
+    bootHint.textContent = lines[Math.min(lines.length-1, i)] || 'Booting...';
+    if (i===6 && Math.random() < 0.15) { bootHint.textContent = 'POST: Double Beep (easter egg)'; beep({frequency:920,duration:0.04}); setTimeout(()=>beep({frequency:920,duration:0.04}),80); } else if (i===6) { beep({frequency:840,duration:0.08}); }
+    i += 1;
+    if (i>=lines.length) { clearInterval(timer); setTimeout(()=>{ bootScreen.classList.add('hidden'); desktop.classList.remove('hidden'); taskbar.classList.remove('hidden'); playStartupChime(); if(!uiState.firstBootDone){ wizard.classList.remove('hidden'); } else { uiState.openApps.forEach((app)=>openApp(app)); }}, 450); }
+  }, 170);
 }
 
+wizardFinish.addEventListener('click', ()=>{
+  uiState.firstBootDone = true;
+  uiState.username = document.getElementById('wizard-username').value || 'TOWER_OP';
+  uiState.timezone = document.getElementById('wizard-timezone').value;
+  applyTheme(document.getElementById('wizard-theme').value);
+  wizard.classList.add('hidden');
+  saveUiState();
+  openApp('about');
+});
+
+applyTheme(uiState.theme);
+applyWallpaper();
+positionIcons();
+setupDesktopInteractions();
 updateClock();
 setInterval(updateClock, 1000);
 setInterval(showRandomSystemMessage, 4000);
 bootSequence();
 
-document.querySelectorAll(".desktop-icon").forEach((button) => {
-  button.addEventListener("dblclick", () => {
-    playClickSound();
-    openApp(button.dataset.app);
-  });
-});
-
-document.querySelectorAll(".start-menu [data-app]").forEach((button) => {
-  button.addEventListener("click", () => {
-    playClickSound();
-    openApp(button.dataset.app);
-    toggleStartMenu(false);
-  });
-});
-
-document.querySelectorAll("[data-theme]").forEach((button) => {
-  button.addEventListener("click", () => {
-    playClickSound();
-    document.body.setAttribute("data-theme", button.dataset.theme);
-  });
-});
-
-startButton.addEventListener("click", () => {
-  playClickSound();
-  toggleStartMenu();
-});
-
-systemMessageClose.addEventListener("click", () => {
-  playClickSound();
-  systemMessage.classList.add("hidden");
-});
-
-document.addEventListener("pointerdown", (event) => {
-  if (!startMenu.contains(event.target) && event.target !== startButton) {
-    toggleStartMenu(false);
-  }
-});
+document.querySelectorAll('.start-menu [data-app]').forEach((button)=>{ button.addEventListener('click',()=>{ playClickSound(); openApp(button.dataset.app); toggleStartMenu(false); }); });
+document.querySelectorAll('[data-theme]').forEach((button)=>{ button.addEventListener('click',()=>{ playClickSound(); applyTheme(button.dataset.theme); }); });
+startButton.addEventListener('click',()=>{ playClickSound(); toggleStartMenu(); });
+clock.addEventListener('contextmenu', (e)=>{ e.preventDefault(); systemMessageText.textContent='Time adjustment panel is unavailable in demo mode.'; systemMessage.classList.remove('hidden'); });
+systemMessageClose.addEventListener('click',()=>{ playClickSound(); systemMessage.classList.add('hidden'); });
+document.addEventListener('pointerdown',(event)=>{ if (!startMenu.contains(event.target) && event.target !== startButton) toggleStartMenu(false); if (!desktopMenu.contains(event.target)) desktopMenu.classList.add('hidden');});
+window.addEventListener('resize', positionIcons);

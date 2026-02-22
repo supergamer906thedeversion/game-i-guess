@@ -688,3 +688,104 @@ textarea {
 .winamp-player audio {
   display: none;
 }
+
+/* Immersion polish overrides */
+.desktop {
+  position: fixed;
+  inset: 2px 0 28px 2px;
+  display: block;
+}
+.desktop-icon {
+  position: absolute;
+  width: 78px;
+  min-height: 62px;
+}
+.desktop-icon.selected {
+  border: 1px dotted #111;
+  background: var(--icon-hover);
+}
+.desktop-icon span:last-child {
+  max-width: 74px;
+  white-space: normal;
+  word-break: break-word;
+}
+.selection-box {
+  position: absolute;
+  border: 1px dotted #fff;
+  background: rgba(0, 0, 120, 0.2);
+  pointer-events: none;
+}
+.start-button:hover,
+.taskbar-app:hover,
+.start-menu button:hover,
+.desktop-menu button:hover,
+.window-content button:hover {
+  background: var(--icon-hover);
+}
+.start-button[aria-expanded="true"] {
+  transform: translateY(1px);
+}
+.clock {
+  cursor: default;
+}
+.window {
+  transition: transform 120ms steps(3), opacity 120ms linear;
+  transform-origin: top left;
+}
+.window.opening { transform: scale(0.95); opacity: 0.4; }
+.window.closing { opacity: 0; }
+.window.minimizing { transform: scale(0.6); opacity: 0.2; }
+.desktop-menu {
+  position: fixed;
+  z-index: 4000;
+  width: 170px;
+  padding: 3px;
+  background: var(--taskbar-bg);
+  border-top: 2px solid var(--frame-light);
+  border-left: 2px solid var(--frame-light);
+  border-right: 2px solid var(--frame-dark);
+  border-bottom: 2px solid var(--frame-dark);
+}
+.desktop-menu button { width: 100%; text-align: left; margin-bottom: 2px; }
+.boot-phase { margin: 0 0 6px; }
+.boot-modules {
+  margin: 0 0 8px;
+  min-height: 70px;
+  max-height: 110px;
+  overflow: hidden;
+  font-family: "Courier New", monospace;
+}
+.boot-progress { width: min(420px, 92vw); }
+.boot-progress-fill {
+  height: 14px;
+  width: 0;
+  background: repeating-linear-gradient(90deg, var(--boot-seg-on) 0 12px, #458282 12px 14px);
+}
+.setup-wizard {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: grid;
+  place-items: center;
+  z-index: 6000;
+}
+.wizard-box {
+  width: 280px;
+  background: var(--bg-dialog);
+  padding: 6px;
+  border-top: 2px solid var(--frame-light);
+  border-left: 2px solid var(--frame-light);
+  border-right: 2px solid var(--frame-dark);
+  border-bottom: 2px solid var(--frame-dark);
+  display: grid;
+  gap: 6px;
+}
+.wizard-box header { background: var(--title-active); color: #fff; padding: 3px; }
+.wizard-box input, .wizard-box select {
+  width: 100%;
+  border-top: 2px solid var(--frame-mid);
+  border-left: 2px solid var(--frame-mid);
+  border-right: 2px solid var(--frame-light);
+  border-bottom: 2px solid var(--frame-light);
+}
+.window-content .tree { font-family: "Courier New", monospace; background: var(--content-pre-bg); padding: 4px; }
