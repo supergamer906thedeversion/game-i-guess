@@ -949,6 +949,47 @@ function updateClock() {
 function refreshTaskbarState() { openWindows.forEach(({ window, taskButton }) => taskButton.classList.toggle('active', window.classList.contains('active') && !window.classList.contains('hidden'))); }
 function focusWindow(win) { document.querySelectorAll('.window').forEach((w)=>w.classList.remove('active')); win.classList.add('active'); z += 1; win.style.zIndex = String(z); refreshTaskbarState(); }
 
+function getDesktopBounds() {
+  const desktopRect = desktop.getBoundingClientRect();
+  return {
+    width: Math.max(260, Math.floor(desktopRect.width)),
+    height: Math.max(180, Math.floor(desktopRect.height))
+  };
+}
+
+function clampWindowToDesktop(windowEl) {
+  if (windowEl.classList.contains('hidden') || windowEl.dataset.maximized === 'true') return;
+  const bounds = getDesktopBounds();
+  const rect = windowEl.getBoundingClientRect();
+  const maxLeft = Math.max(0, bounds.width - rect.width);
+  const maxTop = Math.max(0, bounds.height - rect.height);
+  const left = Number.parseFloat(windowEl.style.left || '0');
+  const top = Number.parseFloat(windowEl.style.top || '0');
+  const safeLeft = Number.isFinite(left) ? Math.min(Math.max(left, 0), maxLeft) : 0;
+  const safeTop = Number.isFinite(top) ? Math.min(Math.max(top, 0), maxTop) : 0;
+  windowEl.style.left = `${Math.round(safeLeft)}px`;
+  windowEl.style.top = `${Math.round(safeTop)}px`;
+}
+
+function clampDesktopMenuPosition() {
+  if (desktopMenu.classList.contains('hidden')) return;
+  const menuRect = desktopMenu.getBoundingClientRect();
+  const maxLeft = Math.max(2, window.innerWidth - menuRect.width - 2);
+  const maxTop = Math.max(2, window.innerHeight - menuRect.height - 30);
+  const left = Number.parseFloat(desktopMenu.style.left || '2');
+  const top = Number.parseFloat(desktopMenu.style.top || '2');
+  desktopMenu.style.left = `${Math.min(Math.max(left, 2), maxLeft)}px`;
+  desktopMenu.style.top = `${Math.min(Math.max(top, 2), maxTop)}px`;
+}
+
+function clampStartMenuPosition() {
+  const menuRect = startMenu.getBoundingClientRect();
+  if (!menuRect.width || startMenu.classList.contains('hidden')) return;
+  const maxLeft = Math.max(2, window.innerWidth - menuRect.width - 2);
+  const left = Number.parseFloat(startMenu.style.left || '2');
+  startMenu.style.left = `${Math.min(Math.max(left, 2), maxLeft)}px`;
+}
+
 function createTaskbarButton(title, windowEl) {
   const button = document.createElement('button'); button.className = 'taskbar-app'; button.textContent = title; button.title='Toggle module window';
   button.addEventListener('click', ()=>{ playClickSound(); const hidden=windowEl.classList.toggle('hidden'); if(!hidden) focusWindow(windowEl); else {windowEl.classList.remove('active'); refreshTaskbarState();} saveUiState(); });
@@ -958,8 +999,8 @@ function createTaskbarButton(title, windowEl) {
 function makeDraggable(windowEl, dragHandle) {
   let active=false, offsetX=0, offsetY=0;
   dragHandle.addEventListener('pointerdown',(event)=>{ active=true; focusWindow(windowEl); const rect=windowEl.getBoundingClientRect(); offsetX=event.clientX-rect.left; offsetY=event.clientY-rect.top; dragHandle.setPointerCapture(event.pointerId); document.body.style.cursor='move';});
-  dragHandle.addEventListener('pointermove',(event)=>{ if(!active) return; windowEl.style.left=`${Math.max(0,event.clientX-offsetX)}px`; windowEl.style.top=`${Math.max(0,event.clientY-offsetY)}px`; });
-  dragHandle.addEventListener('pointerup',(event)=>{ active=false; document.body.style.cursor='default'; dragHandle.releasePointerCapture(event.pointerId); });
+  dragHandle.addEventListener('pointermove',(event)=>{ if(!active) return; windowEl.style.left=`${Math.max(0,event.clientX-offsetX)}px`; windowEl.style.top=`${Math.max(0,event.clientY-offsetY)}px`; clampWindowToDesktop(windowEl); });
+  dragHandle.addEventListener('pointerup',(event)=>{ active=false; document.body.style.cursor='default'; dragHandle.releasePointerCapture(event.pointerId); clampWindowToDesktop(windowEl); });
 }
 
 function openApp(appId) {
@@ -974,14 +1015,31 @@ function openApp(appId) {
   closeButton.addEventListener('click', ()=>{ playClickSound(); windowEl.classList.add('closing'); setTimeout(()=>{taskButton.remove();windowEl.remove();openWindows.delete(appId);refreshTaskbarState();saveUiState();},120); });
   minimizeButton.addEventListener('click', ()=>{ playClickSound(); windowEl.classList.add('minimizing'); setTimeout(()=>{windowEl.classList.add('hidden');windowEl.classList.remove('active','minimizing');refreshTaskbarState();},110); saveUiState();});
   [minimizeButton, fullscreenButton, closeButton].forEach((b)=>b.addEventListener('pointerdown',(e)=>e.stopPropagation()));
-  fullscreenButton.addEventListener('click', ()=>{ playClickSound(); const m=windowEl.dataset.maximized==='true'; if(m){ windowEl.style.left=windowEl.dataset.prevLeft;windowEl.style.top=windowEl.dataset.prevTop;windowEl.style.width=windowEl.dataset.prevWidth;windowEl.style.height=windowEl.dataset.prevHeight;windowEl.dataset.maximized='false'; return;} windowEl.dataset.prevLeft=windowEl.style.left;windowEl.dataset.prevTop=windowEl.style.top;windowEl.dataset.prevWidth=windowEl.style.width||'';windowEl.dataset.prevHeight=windowEl.style.height||'';windowEl.style.left='0px';windowEl.style.top='0px';windowEl.style.width='calc(100vw - 4px)';windowEl.style.height='calc(100vh - 32px)';windowEl.dataset.maximized='true';});
-  desktop.append(windowEl); requestAnimationFrame(()=>windowEl.classList.remove('opening')); openWindows.set(appId, { window: windowEl, taskButton }); focusWindow(windowEl); playOpenSound(); saveUiState();
+  fullscreenButton.addEventListener('click', ()=>{ playClickSound(); const m=windowEl.dataset.maximized==='true'; if(m){ windowEl.style.left=windowEl.dataset.prevLeft;windowEl.style.top=windowEl.dataset.prevTop;windowEl.style.width=windowEl.dataset.prevWidth;windowEl.style.height=windowEl.dataset.prevHeight;windowEl.dataset.maximized='false'; clampWindowToDesktop(windowEl); return;} windowEl.dataset.prevLeft=windowEl.style.left;windowEl.dataset.prevTop=windowEl.style.top;windowEl.dataset.prevWidth=windowEl.style.width||'';windowEl.dataset.prevHeight=windowEl.style.height||'';windowEl.style.left='0px';windowEl.style.top='0px';windowEl.style.width='calc(100vw - 4px)';windowEl.style.height='calc(100vh - 32px)';windowEl.dataset.maximized='true';});
+  desktop.append(windowEl); requestAnimationFrame(()=>{windowEl.classList.remove('opening'); clampWindowToDesktop(windowEl);}); openWindows.set(appId, { window: windowEl, taskButton }); focusWindow(windowEl); playOpenSound(); saveUiState();
 }
 
 function positionIcons() {
   const icons=[...document.querySelectorAll('.desktop-icon')];
   const colW=84,rowH=72,maxRows=Math.max(1,Math.floor((window.innerHeight-34)/rowH));
-  icons.forEach((icon,idx)=>{const saved=uiState.iconPositions[icon.dataset.app]; if(saved){icon.style.left=saved.left; icon.style.top=saved.top; return;} const col=Math.floor(idx/maxRows),row=idx%maxRows; icon.style.left=`${6+col*colW}px`;icon.style.top=`${6+row*rowH}px`;});
+  const bounds = getDesktopBounds();
+  icons.forEach((icon,idx)=>{
+    const saved=uiState.iconPositions[icon.dataset.app];
+    if(saved){
+      icon.style.left=saved.left;
+      icon.style.top=saved.top;
+    } else {
+      const col=Math.floor(idx/maxRows),row=idx%maxRows;
+      icon.style.left=`${6+col*colW}px`;
+      icon.style.top=`${6+row*rowH}px`;
+    }
+    const left = Number.parseFloat(icon.style.left || '6');
+    const top = Number.parseFloat(icon.style.top || '6');
+    const maxLeft = Math.max(6, bounds.width - icon.offsetWidth - 6);
+    const maxTop = Math.max(6, bounds.height - icon.offsetHeight - 6);
+    icon.style.left = `${Math.min(Math.max(left, 6), maxLeft)}px`;
+    icon.style.top = `${Math.min(Math.max(top, 6), maxTop)}px`;
+  });
 }
 function saveIconPosition(icon){ uiState.iconPositions[icon.dataset.app]={left:icon.style.left,top:icon.style.top}; saveUiState(); }
 function setupDesktopInteractions(){
@@ -991,12 +1049,12 @@ function setupDesktopInteractions(){
     icon.addEventListener('click',()=>{document.querySelectorAll('.desktop-icon').forEach(i=>i.classList.remove('selected'));icon.classList.add('selected'); selected=icon;});
     icon.addEventListener('dblclick',()=>{playClickSound(); openApp(icon.dataset.app);});
     icon.addEventListener('pointerdown',(e)=>{active=true;moved=false;const r=icon.getBoundingClientRect();ox=e.clientX-r.left;oy=e.clientY-r.top; icon.setPointerCapture(e.pointerId);});
-    icon.addEventListener('pointermove',(e)=>{if(!active) return; moved=true; icon.style.left=`${Math.max(2,e.clientX-ox)}px`; icon.style.top=`${Math.max(2,e.clientY-oy)}px`;});
+    icon.addEventListener('pointermove',(e)=>{if(!active) return; moved=true; const bounds=getDesktopBounds(); const maxLeft=Math.max(6,bounds.width-icon.offsetWidth-6); const maxTop=Math.max(6,bounds.height-icon.offsetHeight-6); icon.style.left=`${Math.min(Math.max(6,e.clientX-ox),maxLeft)}px`; icon.style.top=`${Math.min(Math.max(6,e.clientY-oy),maxTop)}px`;});
     icon.addEventListener('pointerup',(e)=>{active=false;icon.releasePointerCapture(e.pointerId); if(moved){const snapX=Math.round(parseInt(icon.style.left,10)/84)*84+6;const snapY=Math.round(parseInt(icon.style.top,10)/72)*72+6; icon.style.left=`${snapX}px`;icon.style.top=`${snapY}px`; saveIconPosition(icon);} clearTimeout(clickTimer); clickTimer=setTimeout(()=>{},250);});
   });
 
   desktop.addEventListener('click',(e)=>{ if(e.target===desktop){document.querySelectorAll('.desktop-icon').forEach(i=>i.classList.remove('selected')); selected=null;} desktopMenu.classList.add('hidden'); });
-  desktop.addEventListener('contextmenu',(e)=>{e.preventDefault(); desktopMenu.style.left=`${e.clientX}px`; desktopMenu.style.top=`${e.clientY}px`; desktopMenu.classList.remove('hidden');});
+  desktop.addEventListener('contextmenu',(e)=>{e.preventDefault(); desktopMenu.style.left=`${e.clientX}px`; desktopMenu.style.top=`${e.clientY}px`; desktopMenu.classList.remove('hidden'); clampDesktopMenuPosition();});
   desktopMenu.addEventListener('click',(e)=>{ const action=e.target.dataset.action; if(action==='refresh'){playClickSound(); positionIcons();}
     if(action==='wallpaper'){playClickSound(); uiState.wallpaper = uiState.wallpaper==='default' ? 'grid' : uiState.wallpaper==='grid' ? 'tarmac' : 'default'; applyWallpaper(); saveUiState();}
     if(action==='rename' && selected){ const name=prompt('Rename icon:', selected.querySelector('span:last-child').textContent); if(name){selected.querySelector('span:last-child').textContent=name;} }
@@ -1009,7 +1067,7 @@ function setupDesktopInteractions(){
   desktop.addEventListener('pointerup',()=>{ selecting=false; selectionBox.classList.add('hidden'); });
 }
 
-function toggleStartMenu(force) { const shouldOpen = force ?? startMenu.classList.contains('hidden'); startMenu.classList.toggle('hidden', !shouldOpen); startButton.setAttribute('aria-expanded', String(shouldOpen)); }
+function toggleStartMenu(force) { const shouldOpen = force ?? startMenu.classList.contains('hidden'); startMenu.classList.toggle('hidden', !shouldOpen); startButton.setAttribute('aria-expanded', String(shouldOpen)); if (shouldOpen) clampStartMenuPosition(); }
 function showRandomSystemMessage() { if (!systemMessage.classList.contains('hidden')) return; if (Math.random() > 0.02) return; systemMessageText.textContent = fakeErrors[Math.floor(Math.random()*fakeErrors.length)] || 'Radar module responding slowly.'; systemMessage.classList.remove('hidden'); playErrorSound(); }
 
 function bootSequence() {
@@ -1063,4 +1121,4 @@ startButton.addEventListener('click',()=>{ playClickSound(); toggleStartMenu(); 
 clock.addEventListener('contextmenu', (e)=>{ e.preventDefault(); systemMessageText.textContent='Time adjustment panel is unavailable in demo mode.'; systemMessage.classList.remove('hidden'); });
 systemMessageClose.addEventListener('click',()=>{ playClickSound(); systemMessage.classList.add('hidden'); });
 document.addEventListener('pointerdown',(event)=>{ if (!startMenu.contains(event.target) && event.target !== startButton) toggleStartMenu(false); if (!desktopMenu.contains(event.target)) desktopMenu.classList.add('hidden');});
-window.addEventListener('resize', positionIcons);
+window.addEventListener('resize', ()=>{ positionIcons(); clampStartMenuPosition(); clampDesktopMenuPosition(); openWindows.forEach(({ window })=>clampWindowToDesktop(window)); });

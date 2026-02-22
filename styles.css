@@ -843,3 +843,28 @@ textarea {
   border-bottom: 2px solid var(--frame-light);
 }
 .window-content .tree { font-family: "Courier New", monospace; background: var(--content-pre-bg); padding: 4px; }
+
+@media (max-width: 800px), (max-height: 600px) {
+  .start-menu {
+    width: min(300px, calc(100vw - 8px));
+    max-height: calc(100vh - 36px);
+    overflow: auto;
+  }
+
+  .taskbar-right .task-icon:nth-child(n + 3) {
+    display: none;
+  }
+
+  .taskbar-app {
+    min-width: 70px;
+    max-width: 120px;
+  }
+
+  .window {
+    width: min(380px, calc(100vw - 8px));
+  }
+
+  .window-content {
+    min-height: 90px;
+  }
+}
