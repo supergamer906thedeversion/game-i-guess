@@ -8,43 +8,60 @@
 </head>
 <body>
   <section class="boot-screen" id="boot-screen" aria-live="polite">
-    <pre class="bios-log" id="bios-log">AIRPORTOS BIOS v1.96
-CPU: TERMINAL CONTROL UNIT
-MEMORY TEST: 0000 KB</pre>
+    <pre class="bios-log" id="bios-log">AIRPORT BIOS v2.1
+CPU: TERMINAL CONTROL UNIT @ 66MHZ
+MEMORY TEST: 00000 KB</pre>
+    <p class="boot-phase" id="boot-phase">BIOS PHASE...</p>
+    <pre class="boot-modules" id="boot-modules"></pre>
     <div class="boot-progress" aria-label="Boot progress">
-      <div class="boot-progress-segments" id="boot-progress-segments"></div>
+      <div class="boot-progress-fill" id="boot-progress-fill"></div>
     </div>
-    <p class="boot-hint">Initializing AirportOS...</p>
+    <p class="boot-hint" id="boot-hint">Initializing AirportOS...</p>
+  </section>
+
+  <section class="setup-wizard hidden" id="setup-wizard" aria-live="polite">
+    <article class="wizard-box">
+      <header>AirportOS First Boot Setup</header>
+      <label>Username <input id="wizard-username" maxlength="18" value="TOWER_OP" /></label>
+      <label>Timezone
+        <select id="wizard-timezone">
+          <option>UTC</option><option>America/New_York</option><option>Europe/London</option><option>Asia/Tokyo</option>
+        </select>
+      </label>
+      <label>Desktop Theme
+        <select id="wizard-theme">
+          <option value="win95">Classic Windows 95</option>
+          <option value="plus-space">Plus! Space</option>
+          <option value="active-desktop">Active Desktop</option>
+          <option value="litestep">LiteStep Hacker Style</option>
+        </select>
+      </label>
+      <button id="wizard-finish">Finish Setup</button>
+    </article>
   </section>
 
   <main class="desktop hidden" id="desktop" aria-label="Airport desktop">
-    <button class="desktop-icon" data-app="systems" title="Monitors runway traffic." aria-label="Open Flight Systems">
-      <span class="icon-pixel" aria-hidden="true">▣</span>
-      <span>Flight Systems</span>
-    </button>
-    <button class="desktop-icon" data-app="hangar" title="Maintains gate assignment records." aria-label="Open Hangar">
-      <span class="icon-pixel" aria-hidden="true">▥</span>
-      <span>Hangar</span>
-    </button>
-    <button class="desktop-icon" data-app="radar" title="Tracks transponder IDs." aria-label="Open Radar Control">
-      <span class="icon-pixel" aria-hidden="true">▦</span>
-      <span>Radar Control</span>
-    </button>
-    <button class="desktop-icon" data-app="runway" title="Queues runway module operations." aria-label="Open Runway Monitor">
-      <span class="icon-pixel" aria-hidden="true">▤</span>
-      <span>Runway Monitor</span>
-    </button>
-    <button class="desktop-icon" data-app="archive" title="Opens diagnostic records." aria-label="Open Archive Terminal">
-      <span class="icon-pixel" aria-hidden="true">▧</span>
-      <span>Archive Terminal</span>
-    </button>
+    <div class="selection-box hidden" id="selection-box"></div>
+    <button class="desktop-icon" data-app="systems" aria-label="Open Flight Systems"><span class="icon-pixel">▣</span><span>Flight Systems</span></button>
+    <button class="desktop-icon" data-app="hangar" aria-label="Open Hangar"><span class="icon-pixel">▥</span><span>Hangar</span></button>
+    <button class="desktop-icon" data-app="radar" aria-label="Open Radar Control"><span class="icon-pixel">▦</span><span>Radar Control</span></button>
+    <button class="desktop-icon" data-app="runway" aria-label="Open Runway Monitor"><span class="icon-pixel">▤</span><span>Runway Monitor</span></button>
+    <button class="desktop-icon" data-app="archive" aria-label="Open Archive Terminal"><span class="icon-pixel">▧</span><span>Archive Terminal</span></button>
+    <button class="desktop-icon" data-app="about" aria-label="Open About"><span class="icon-pixel">ⓘ</span><span>About AirportOS</span></button>
+    <button class="desktop-icon" data-app="control" aria-label="Open Control Panel"><span class="icon-pixel">⚙</span><span>Control Panel</span></button>
+    <button class="desktop-icon" data-app="explorer" aria-label="Open File Explorer"><span class="icon-pixel">▣</span><span>File Explorer</span></button>
+    <button class="desktop-icon" data-app="terminal" aria-label="Open Terminal"><span class="icon-pixel">⌨</span><span>Terminal</span></button>
+    <button class="desktop-icon" data-app="help" aria-label="Open Help"><span class="icon-pixel">?</span><span>Help Viewer</span></button>
   </main>
 
   <section class="taskbar hidden" id="taskbar" aria-label="Taskbar">
     <button id="start-button" class="start-button" aria-expanded="false">■ TOWER</button>
     <div class="taskbar-apps" id="taskbar-apps" aria-label="Open modules"></div>
     <div class="taskbar-right">
-      <span class="task-icon" title="Diagnostics Online">◫</span>
+      <span class="task-icon" title="Volume">🔊</span>
+      <span class="task-icon" title="Radar Signal">📡</span>
+      <span class="task-icon" title="Network">🖧</span>
+      <span class="task-icon" title="Power">🔋</span>
       <time id="clock" class="clock" aria-label="Current time"></time>
     </div>
   </section>
@@ -52,26 +69,20 @@ MEMORY TEST: 0000 KB</pre>
   <aside class="start-menu hidden" id="start-menu" aria-label="Control menu">
     <div class="start-menu-banner">AIRPORTOS 1.0</div>
     <div class="start-menu-items">
-      <button data-app="systems">▣ FLIGHT SYSTEMS</button>
-      <button data-app="hangar">▥ HANGAR</button>
-      <button data-app="radar">▦ RADAR CONTROL</button>
-      <button data-app="runway">▤ RUNWAY MONITOR</button>
-      <button data-app="archive">▧ ARCHIVE TERMINAL</button>
+      <button data-app="systems">▣ FLIGHT SYSTEMS</button><button data-app="hangar">▥ HANGAR</button><button data-app="radar">▦ RADAR CONTROL</button><button data-app="runway">▤ RUNWAY MONITOR</button><button data-app="archive">▧ ARCHIVE TERMINAL</button>
+      <hr /><button data-app="about">ⓘ ABOUT AIRPORTOS</button><button data-app="control">⚙ CONTROL PANEL</button><button data-app="explorer">▣ FILE EXPLORER</button><button data-app="monitor">◫ SYSTEM MONITOR</button><button data-app="terminal">⌨ TERMINAL</button><button data-app="help">? HELP VIEWER</button>
       <hr />
       <p class="menu-label">THEME MODULE</p>
       <div class="theme-switcher" role="group" aria-label="Color theme options">
-        <button data-theme="win95">Classic Windows 95</button>
-        <button data-theme="plus-nature">Plus! Nature</button>
-        <button data-theme="plus-space">Plus! Space</button>
-        <button data-theme="inside-computer">Inside Your Computer</button>
-        <button data-theme="active-desktop">Active Desktop</button>
-        <button data-theme="oem-pc">OEM PC Style</button>
-        <button data-theme="litestep">LiteStep Hacker Style</button>
-        <button data-theme="high-contrast-retro">High Contrast Retro</button>
-        <button data-theme="office-1996">Corporate Office 1996</button>
-        <button data-theme="calmira">Windows 3.1 Throwback</button>
+        <button data-theme="win95">Classic Windows 95</button><button data-theme="plus-nature">Plus! Nature</button><button data-theme="plus-space">Plus! Space</button><button data-theme="inside-computer">Inside Your Computer</button><button data-theme="active-desktop">Active Desktop</button><button data-theme="oem-pc">OEM PC Style</button><button data-theme="litestep">LiteStep Hacker Style</button><button data-theme="high-contrast-retro">High Contrast Retro</button><button data-theme="office-1996">Corporate Office 1996</button><button data-theme="calmira">Windows 3.1 Throwback</button>
       </div>
     </div>
+  </aside>
+
+  <aside class="desktop-menu hidden" id="desktop-menu">
+    <button data-action="refresh">Refresh</button>
+    <button data-action="wallpaper">Change Wallpaper</button>
+    <button data-action="rename">Rename Selected Icon</button>
   </aside>
 
   <section class="system-message hidden" id="system-message" role="alertdialog" aria-live="assertive">
